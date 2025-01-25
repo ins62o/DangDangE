@@ -5,51 +5,46 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  KeyboardAvoidingView,
   Platform,
-  useWindowDimensions,
 } from "react-native";
 const Icon = require("../assets/image/LogoIcon.png");
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { colors, CommonStyle, fonts } from "../common";
 
 export default function Login() {
-  const windowWidth = useWindowDimensions().width;
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Image source={Icon} />
       </View>
-      <KeyboardAvoidingView
-        style={styles.loginBox}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={windowWidth > 900 ? 115 : 0}
-      >
-        <View style={styles.inputBox}>
-          <View style={styles.marginBox}>
+      <View style={Box.loginBox}>
+        <View style={Box.inputBox}>
+          <View style={Box.marginBox}>
             <Text style={styles.inputInfo}>아이디</Text>
-            <TextInput style={styles.input} autoCapitalize={"none"} />
+            <TextInput style={CommonStyle.input} autoCapitalize={"none"} />
           </View>
 
-          <View style={styles.marginBox}>
+          <View style={Box.marginBox}>
             <Text style={styles.inputInfo}>비밀번호</Text>
             <TextInput
-              style={styles.input}
+              style={CommonStyle.input}
               secureTextEntry
               autoCorrect={false}
             />
           </View>
 
-          <View style={styles.marginBox}>
-            <TouchableOpacity style={styles.button}>
+          <View style={Box.marginBox}>
+            <TouchableOpacity
+              style={[CommonStyle.button, { backgroundColor: colors.primary }]}
+            >
               <Text style={styles.loginText}>로그인</Text>
             </TouchableOpacity>
           </View>
 
-          <View style={styles.TextBox}>
+          <View style={Box.TextBox}>
             <Text style={styles.signUp}> 당당이가 처음이라면 ?</Text>
           </View>
         </View>
-      </KeyboardAvoidingView>
+      </View>
     </View>
   );
 }
@@ -57,48 +52,35 @@ export default function Login() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
   },
   header: {
     flex: 0.3,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#fff",
-  },
-  loginBox: {
-    flex: 0.7,
-    borderWidth: 2,
-    borderColor: "#E0ECDE",
-    borderStyle: "solid",
-    borderRadius: 20,
-    backgroundColor: "#E0ECDE",
-  },
-  inputBox: {
-    flex: 0.6,
-    alignItems: "center",
-  },
-  input: {
-    width: "100%",
-    height: 40,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    marginVertical: 10,
-    paddingHorizontal: 10,
   },
   inputInfo: {
     alignSelf: "flex-start",
-  },
-  button: {
-    backgroundColor: "#2C6975",
-    width: "100%",
-    height: 40,
-    borderRadius: 8,
-    justifyContent: "center",
+    fontSize: Platform.OS === "android" ? fonts.small : fonts.medium,
   },
   loginText: {
     color: "#fff",
     textAlign: "center",
+    fontSize: Platform.OS === "android" ? fonts.small : fonts.medium,
+  },
+  signUp: {
+    fontSize: Platform.OS === "android" ? fonts.small : fonts.medium,
+    color: colors.primary,
+  },
+});
+
+const Box = StyleSheet.create({
+  loginBox: {
+    flex: 0.7,
+    borderWidth: 2,
+    borderColor: colors.sub,
+    borderStyle: "solid",
+    borderRadius: 20,
+    backgroundColor: colors.sub,
   },
   marginBox: {
     alignItems: "center",
@@ -108,8 +90,8 @@ const styles = StyleSheet.create({
   TextBox: {
     marginTop: 60,
   },
-  signUp: {
-    fontSize: 18,
-    color: "#2C6975",
+  inputBox: {
+    flex: 0.6,
+    alignItems: "center",
   },
 });
