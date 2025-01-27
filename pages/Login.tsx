@@ -1,50 +1,72 @@
+import React from "react";
 import {
+  Text,
   View,
   StyleSheet,
   Image,
-  Text,
   TextInput,
   TouchableOpacity,
+  KeyboardAvoidingView,
   Platform,
+  useWindowDimensions,
 } from "react-native";
-const Icon = require("../assets/image/LogoIcon.png");
+
 import { colors, CommonStyle, fonts } from "../common";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+
+const Logo = require("../assets/image/Logo.png");
+
+type StackParamList = {
+  Splash: undefined;
+  Login: undefined;
+  SignUp: undefined;
+};
 
 export default function Login() {
+  const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
+  const windowWidth = useWindowDimensions().width;
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Image source={Icon} />
+      <View style={styles.logoContainer}>
+        <Image
+          source={Logo}
+          style={[styles.logo, { width: windowWidth > 900 ? "50%" : "100%" }]}
+          resizeMode="cover"
+        />
       </View>
-      <View style={Box.loginBox}>
-        <View style={Box.inputBox}>
-          <View style={Box.marginBox}>
-            <Text style={styles.inputInfo}>아이디</Text>
-            <TextInput style={CommonStyle.input} autoCapitalize={"none"} />
+      <KeyboardAvoidingView style={styles.loginContainer} behavior="padding">
+        <View style={styles.titleContainer}>
+          <Text style={texts.title}>로그인</Text>
+        </View>
+        <View style={styles.mainContainer}>
+          <View style={CommonStyle.input}>
+            <Text style={texts.body}>아이디</Text>
+            <TextInput style={styles.input} placeholder="user@email.com" />
           </View>
 
-          <View style={Box.marginBox}>
-            <Text style={styles.inputInfo}>비밀번호</Text>
+          <View style={CommonStyle.input}>
+            <Text style={texts.body}>비밀번호</Text>
             <TextInput
-              style={CommonStyle.input}
+              style={styles.input}
+              placeholder="******"
               secureTextEntry
-              autoCorrect={false}
             />
           </View>
 
-          <View style={Box.marginBox}>
-            <TouchableOpacity
-              style={[CommonStyle.button, { backgroundColor: colors.primary }]}
-            >
-              <Text style={styles.loginText}>로그인</Text>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity style={CommonStyle.button}>
+              <Text style={texts.buttonText}>들어가기</Text>
             </TouchableOpacity>
           </View>
-
-          <View style={Box.TextBox}>
-            <Text style={styles.signUp}> 당당이가 처음이라면 ?</Text>
-          </View>
+          <Text
+            style={texts.signUp}
+            onPress={() => navigation.navigate("SignUp")}
+          >
+            당당이가 처음이라면 ?
+          </Text>
         </View>
-      </View>
+      </KeyboardAvoidingView>
     </View>
   );
 }
@@ -52,46 +74,62 @@ export default function Login() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: colors.Main,
   },
-  header: {
+  logoContainer: {
     flex: 0.3,
+    paddingTop: 55,
     justifyContent: "center",
     alignItems: "center",
   },
-  inputInfo: {
-    alignSelf: "flex-start",
-    fontSize: Platform.OS === "android" ? fonts.small : fonts.medium,
+  loginContainer: {
+    flex: 0.7,
+    backgroundColor: colors.WhiteSmoke,
+    borderRadius: 80,
+    borderTopEndRadius: 0,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
+    borderBottomStartRadius: 0,
   },
-  loginText: {
-    color: "#fff",
-    textAlign: "center",
-    fontSize: Platform.OS === "android" ? fonts.small : fonts.medium,
+  logo: {
+    width: "100%",
+    height: "100%",
   },
-  signUp: {
-    fontSize: Platform.OS === "android" ? fonts.small : fonts.medium,
-    color: colors.primary,
+  titleContainer: {
+    flex: 0.2,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  mainContainer: {
+    flex: 0.8,
+    alignItems: "center",
+  },
+  input: {
+    marginTop: 5,
+    height: 40,
+    fontSize: fonts.body,
+  },
+  buttonContainer: {
+    width: "80%",
   },
 });
 
-const Box = StyleSheet.create({
-  loginBox: {
-    flex: 0.7,
-    borderWidth: 2,
-    borderColor: colors.sub,
-    borderStyle: "solid",
-    borderRadius: 20,
-    backgroundColor: colors.sub,
+const texts = StyleSheet.create({
+  title: {
+    fontSize: fonts.Headline,
+    fontWeight: "bold",
   },
-  marginBox: {
-    alignItems: "center",
-    width: "80%",
-    marginTop: 20,
+  body: {
+    fontSize: fonts.body,
   },
-  TextBox: {
-    marginTop: 60,
+  buttonText: {
+    color: "#fff",
+    fontSize: fonts.body,
   },
-  inputBox: {
-    flex: 0.6,
-    alignItems: "center",
+  signUp: {
+    fontSize: Platform.OS === "ios" ? fonts.body : fonts.description,
+    color: colors.Main,
+    fontWeight: 500,
+    marginTop: 50,
   },
 });
