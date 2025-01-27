@@ -6,15 +6,23 @@ import {
   useWindowDimensions,
 } from "react-native";
 import Logo from "../assets/image/Logo.png";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+
+type StackParamList = {
+  Splash: undefined;
+  Login: undefined;
+};
 
 export default function Splash() {
   const windowWidth = useWindowDimensions().width;
   const opacity = useRef(new Animated.Value(0)).current;
+  const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
 
   useEffect(() => {
     const animation = Animated.timing(opacity, {
       toValue: 1,
-      duration: 1500,
+      duration: 2500,
       useNativeDriver: true,
     });
 
@@ -23,6 +31,12 @@ export default function Splash() {
     return () => {
       animation.stop();
     };
+  }, []);
+
+  useEffect(() => {
+    setTimeout(() => {
+      navigation.navigate("Login");
+    }, 2500);
   }, []);
 
   return (
