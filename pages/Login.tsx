@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Text,
   View,
@@ -14,14 +13,9 @@ import {
 import { colors, CommonStyle, fonts } from "../common";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { StackParamList } from "../types/stackType";
 
 const Logo = require("../assets/image/Logo.png");
-
-type StackParamList = {
-  Splash: undefined;
-  Login: undefined;
-  SignUp: undefined;
-};
 
 export default function Login() {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
@@ -55,7 +49,10 @@ export default function Login() {
           </View>
 
           <View style={styles.buttonContainer}>
-            <TouchableOpacity style={CommonStyle.button}>
+            <TouchableOpacity
+              style={CommonStyle.button}
+              onPress={() => navigation.navigate("Welcome")}
+            >
               <Text style={texts.buttonText}>들어가기</Text>
             </TouchableOpacity>
           </View>

@@ -1,4 +1,3 @@
-import React from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -9,16 +8,12 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+
 import { colors, CommonStyle, fonts } from "../common";
-import AntDesign from "@expo/vector-icons/AntDesign";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-
-type StackParamList = {
-  Splash: undefined;
-  Login: undefined;
-  SignUp: undefined;
-};
+import { StackParamList } from "../types/stackType";
+import AntDesign from "@expo/vector-icons/AntDesign";
 
 export default function SignUp() {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
