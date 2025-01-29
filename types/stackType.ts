@@ -6,4 +6,5 @@ export type StackParamList = {
   BloodType: undefined;
   BloodInfo: undefined;
   BloodGoal: undefined;
+  KeyboardModal: undefined;
 };

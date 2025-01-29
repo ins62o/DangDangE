@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   SafeAreaView,
@@ -14,54 +14,61 @@ import BloodBox from "../components/BloodBox";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "../types/stackType";
+import KeyboardModal from "../components/KeyboardModal";
 
 export default function BloodGoal() {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
-
+  const [isModal, setIsModal] = useState(false);
+  const handlebutton = () => {
+    setIsModal((prev) => !prev);
+    // navigation.navigate("KeyboardModal");
+  };
   return (
-    <SafeAreaView style={styles.container}>
-      <BloodHeader three={true} />
+    <>
+      <SafeAreaView style={styles.container}>
+        <BloodHeader three={true} />
+        <View style={styles.BloodContainer}>
+          <View style={styles.textContainer}>
+            <Text style={texts.title}>혈당 목표치를 설정해주세요</Text>
+            <Text style={texts.Info}>
+              <Text style={texts.point}>정상 수치와 목표 수치</Text> 를
+              알려드릴게요
+              {"\n"}
+              원하는 <Text style={texts.point}>목표 수치</Text>가 있으시면 직접
+              설정도 가능해요
+            </Text>
+          </View>
 
-      <View style={styles.BloodContainer}>
-        <View style={styles.textContainer}>
-          <Text style={texts.title}>혈당 목표치를 설정해주세요</Text>
-          <Text style={texts.Info}>
-            <Text style={texts.point}>정상 수치와 목표 수치</Text> 를
-            알려드릴게요
-            {"\n"}
-            원하는 <Text style={texts.point}>목표 수치</Text>가 있으시면 직접
-            설정도 가능해요
-          </Text>
-        </View>
-
-        <View style={styles.contentContainer}>
-          <KeyboardAvoidingView
-            style={styles.widthContainer}
-            behavior="padding"
-            keyboardVerticalOffset={100}
-          >
-            <ScrollView
-              style={styles.scrollContainer}
-              showsVerticalScrollIndicator={false}
+          <View style={styles.contentContainer}>
+            <KeyboardAvoidingView
+              style={styles.widthContainer}
+              behavior="padding"
+              keyboardVerticalOffset={100}
             >
-              <BloodBox />
-              <BloodBox />
-              <BloodBox />
-              <BloodBox />
-              <BloodBox />
-            </ScrollView>
-          </KeyboardAvoidingView>
+              <ScrollView
+                style={styles.scrollContainer}
+                showsVerticalScrollIndicator={false}
+              >
+                <BloodBox />
+                <BloodBox />
+                <BloodBox />
+                <BloodBox />
+                <BloodBox />
+              </ScrollView>
+            </KeyboardAvoidingView>
+          </View>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              style={[CommonStyle.button, styles.custom]}
+              onPress={handlebutton}
+            >
+              <Text style={texts.button}>완료</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={[CommonStyle.button, styles.custom]}
-            onPress={() => navigation.navigate("BloodGoal")}
-          >
-            <Text style={texts.button}>완료</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+      {isModal && <KeyboardModal setIsModal={setIsModal} />}
+    </>
   );
 }
 
