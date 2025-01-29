@@ -4,4 +4,6 @@ export type StackParamList = {
   SignUp: undefined;
   Welcome: undefined;
   BloodType: undefined;
+  BloodInfo: undefined;
+  BloodGoal: undefined;
 };
