@@ -16,11 +16,8 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "../types/stackType";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
-import { FIREBASE_AUTH } from "../firebaseConfig";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { FIREBASE_AUTH, FIRESTORE_DB } from "../firebaseConfig";
 import { FirebaseError } from "firebase/app";
 import {
   checkId,
@@ -28,10 +25,14 @@ import {
   checkPw,
   checkSamePw,
 } from "../utils/SignUp/check";
+import { showToast } from "../components/ToastNotice";
+import Toast from "react-native-toast-message";
+import { addDoc, collection, getDocs } from "firebase/firestore";
+import { isNicknameTaken } from "../utils/SignUp/isNicknameTaken";
+import { createUser } from "../utils/SignUp/createUser";
 
 export default function SignUp() {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
-  const auth = FIREBASE_AUTH;
   const [nickname, setNickname] = useState("");
   const [id, setId] = useState("");
   const [pw, setPw] = useState("");
@@ -50,16 +51,32 @@ export default function SignUp() {
   });
 
   const handleSignUp = async () => {
+    // 1. 닉네임 중복 체크
+    if (await isNicknameTaken(nickname)) {
+      Alert.alert("알림", "이미 사용 중인 닉네임입니다.");
+      setIsError((prev) => ({ ...prev, nickname: true }));
+      setErrorTexts((prev) => ({
+        ...prev,
+        nickname: "이미 사용 중인 닉네임입니다.",
+      }));
+      return;
+    }
+
+    // 2. 회원가입
     try {
-      const response = await createUserWithEmailAndPassword(auth, id, pw);
+      await createUser(id, pw, nickname);
+      showToast();
+      setTimeout(() => {
+        navigation.navigate("Login");
+      }, 1500);
     } catch (err) {
       if (
         err instanceof FirebaseError &&
         err.code === "auth/email-already-in-use"
       ) {
-        Alert.alert("알림", "이미 사용중인 이메일입니다.");
+        Alert.alert("알림", "이미 사용 중인 이메일입니다.");
       } else {
-        Alert.alert("안내", "정보를 입력해주세요");
+        Alert.alert("안내", "정보를 입력해주세요.");
       }
     }
   };
@@ -162,6 +179,7 @@ export default function SignUp() {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
+      <Toast />
     </View>
   );
 }
