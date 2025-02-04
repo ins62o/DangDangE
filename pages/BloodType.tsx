@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -6,12 +7,13 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-import { useState } from "react";
+import { useSetRecoilState } from "recoil";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import { colors, CommonStyle, fonts } from "../common";
 import { BloodData } from "../InitialData";
+import { Blood, userBloodData } from "../Atoms/bloodData";
 import { StackParamList } from "../types/stackType";
 import BloodTypeBox from "../components/BloodTypeBox";
 import BloodHeader from "../components/BloodHeader";
@@ -19,10 +21,16 @@ import BloodHeader from "../components/BloodHeader";
 export default function BloodType() {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [title, setTitle] = useState<string>("");
+  const setBlood = useSetRecoilState<Blood>(userBloodData);
 
-  const navigate = () => navigation.navigate("BloodInfo");
   const handlePress = (id: string) =>
     setSelectedId((prevId) => (prevId === id ? null : id));
+
+  const choiceType = () => {
+    setBlood((prev) => ({ ...prev, type: title }));
+    navigation.navigate("BloodInfo");
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -41,6 +49,7 @@ export default function BloodType() {
                 data={data}
                 isClicked={selectedId === data.id}
                 onPress={() => handlePress(data.id)}
+                setTitle={setTitle}
               />
             </View>
           ))}
@@ -48,8 +57,12 @@ export default function BloodType() {
       </View>
       <View style={styles.buttonContainer}>
         <TouchableOpacity
-          style={[CommonStyle.button, styles.custom]}
-          onPress={navigate}
+          style={[
+            CommonStyle.button,
+            selectedId ? styles.custom : styles.uncustom,
+          ]}
+          onPress={choiceType}
+          disabled={!selectedId}
         >
           <Text style={texts.button}>다음</Text>
         </TouchableOpacity>
@@ -90,6 +103,12 @@ const styles = StyleSheet.create({
     width: "90%",
     height: 50,
     backgroundColor: colors.Sub1,
+  },
+
+  uncustom: {
+    width: "90%",
+    height: 50,
+    backgroundColor: colors.Nobel,
   },
 });
 

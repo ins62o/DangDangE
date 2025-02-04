@@ -8,5 +8,6 @@ export type StackParamList = {
   BloodGoal: undefined;
   KeyboardModal: undefined;
   Main: undefined;
+  Home: undefined;
   RecordBlood: { day: any };
 };

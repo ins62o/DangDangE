@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Text,
   View,
@@ -10,15 +10,47 @@ import {
 import MainCalendar from "../components/MainCalendar";
 import { colors, fonts } from "../common";
 import { StatusBar } from "expo-status-bar";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { FIREBASE_AUTH } from "../firebaseConfig";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import {
+  collection,
+  DocumentData,
+  getDocs,
+  getFirestore,
+  query,
+  where,
+} from "firebase/firestore";
+import { useUserData } from "../hooks/useUserData";
+import { useRecoilState } from "recoil";
+import { User, userData } from "../Atoms/userData";
 
 export default function Home() {
+  const [data, setData] = useRecoilState<User>(userData);
+
+  useEffect(() => {
+    const getUser = async () => {
+      const user = await useUserData();
+
+      if (user) {
+        const formattedUser = {
+          id: user.id,
+          nickname: user.nickname,
+        };
+        setData(formattedUser);
+      }
+    };
+
+    getUser();
+  }, []);
+
   return (
     <SafeAreaView style={styles.container}>
       <MainCalendar />
       <View style={styles.contentContainer}>
         <View style={styles.ProfileContainer}>
           <View style={styles.Profile}>
-            <Text style={texts.name}>정인성님</Text>
+            <Text style={texts.name}>{data ? data?.nickname : "게스트님"}</Text>
             <Text style={texts.welcome}>환영합니다</Text>
             <View style={styles.card}>
               <View style={styles.corner} />

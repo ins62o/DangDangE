@@ -8,13 +8,6 @@ import Tabs from "../components/Tabs";
 export default function Main() {
   return (
     <View style={styles.container}>
-      {/* <MainCalendar />
-      <View style={styles.contentContainer}>
-        <ScrollView style={styles.scrollContainer}>
-          <Text>1일째 혈당 관리 성공</Text>
-          <Text>2025-01-30 (오늘)</Text>
-        </ScrollView>
-      </View> */}
       <Tabs />
     </View>
   );

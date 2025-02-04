@@ -15,14 +15,50 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "../types/stackType";
 import KeyboardModal from "../components/KeyboardModal";
+import { useRecoilState } from "recoil";
+import { Blood, userBloodData } from "../Atoms/bloodData";
+import {
+  collection,
+  doc,
+  getDocs,
+  getFirestore,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
+import { FIRESTORE_DB } from "../firebaseConfig";
+import { User, userData } from "../Atoms/userData";
 
 export default function BloodGoal() {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
   const [isModal, setIsModal] = useState(false);
-  const handlebutton = () => {
-    setIsModal((prev) => !prev);
-    // navigation.navigate("KeyboardModal");
+  const [blood, setBlood] = useRecoilState<Blood>(userBloodData);
+  const [user, setUser] = useRecoilState<User>(userData);
+  const [title, setTitle] = useState("");
+  const [type, setType] = useState("");
+  const db = getFirestore();
+
+  const handleEnd = async () => {
+    const q = query(collection(db, "users"), where("id", "==", user.id));
+
+    try {
+      const querySnapshot = await getDocs(q);
+
+      if (!querySnapshot.empty) {
+        const userDoc = querySnapshot.docs[0];
+        const userDocRef = doc(db, "users", userDoc.id);
+
+        await updateDoc(userDocRef, blood);
+
+        navigation.navigate("Main");
+      } else {
+        console.log("No document found with this email.");
+      }
+    } catch (error) {
+      console.error("Error updating document: ", error);
+    }
   };
+
   return (
     <>
       <SafeAreaView style={styles.container}>
@@ -31,17 +67,20 @@ export default function BloodGoal() {
           <View style={styles.textContainer}>
             <Text style={texts.title}>혈당 목표치를 설정해주세요</Text>
             <Text style={texts.Info}>
-              <Text style={texts.point}>정상 수치와 목표 수치</Text> 를
+              <Text style={texts.point}>당뇨인들의 목표수치</Text> 를
               알려드릴게요
               {"\n"}
-              원하는 <Text style={texts.point}>목표 수치</Text>가 있으시면 직접
-              설정도 가능해요
+              <Text style={texts.point}>원하는 목표 수치</Text>가 있으시면 직접
+              설정도 가능해요{"\n"}
+              <Text>
+                입력하지 않을 경우 <Text style={texts.point}>기본 설정</Text>
+                으로 세팅됩니다.
+              </Text>
             </Text>
           </View>
 
           <View style={styles.contentContainer}>
             <KeyboardAvoidingView
-              style={styles.widthContainer}
               behavior="padding"
               keyboardVerticalOffset={100}
             >
@@ -49,25 +88,32 @@ export default function BloodGoal() {
                 style={styles.scrollContainer}
                 showsVerticalScrollIndicator={false}
               >
-                <BloodBox />
-                <BloodBox />
-                <BloodBox />
-                <BloodBox />
-                <BloodBox />
+                {blood.time.map((item, idx) => (
+                  <BloodBox
+                    title={item}
+                    key={idx}
+                    setIsModal={setIsModal}
+                    blood={blood.goal[idx]}
+                    setTitle={setTitle}
+                    setType={setType}
+                  />
+                ))}
               </ScrollView>
             </KeyboardAvoidingView>
           </View>
           <View style={styles.buttonContainer}>
             <TouchableOpacity
               style={[CommonStyle.button, styles.custom]}
-              onPress={handlebutton}
+              onPress={handleEnd}
             >
               <Text style={texts.button}>완료</Text>
             </TouchableOpacity>
           </View>
         </View>
       </SafeAreaView>
-      {isModal && <KeyboardModal setIsModal={setIsModal} />}
+      {isModal && (
+        <KeyboardModal setIsModal={setIsModal} title={title} type={type} />
+      )}
     </>
   );
 }
@@ -80,15 +126,13 @@ const styles = StyleSheet.create({
     flex: 0.9,
   },
   textContainer: {
-    flex: 0.1,
+    flex: 0.2,
     alignItems: "center",
     justifyContent: "center",
   },
   contentContainer: {
     flex: 0.8,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingTop: 20,
+    padding: 20,
   },
   buttonContainer: {
     flex: 0.1,
@@ -102,9 +146,7 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     width: "100%",
-  },
-  widthContainer: {
-    width: "90%",
+    height: "100%",
   },
 });
 

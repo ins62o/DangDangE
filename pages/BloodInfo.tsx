@@ -7,20 +7,28 @@ import {
   Pressable,
   TouchableOpacity,
 } from "react-native";
-import BloodHeader from "../components/BloodHeader";
-import { colors, CommonStyle, fonts } from "../common";
-import TimeButton from "../components/TimeButton";
+
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+
+import { colors, CommonStyle, fonts } from "../common";
+import TimeButton from "../components/TimeButton";
+import BloodHeader from "../components/BloodHeader";
 import { StackParamList } from "../types/stackType";
+import { Blood, userBloodData } from "../Atoms/bloodData";
+import { useRecoilState, useSetRecoilState } from "recoil";
 
 export default function BloodInfo() {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
+  const [time, setTime] = useState<string[]>([]);
+  const [blood, setBlood] = useRecoilState<Blood>(userBloodData);
   const [isClicked, setIsClicked] = useState({
     none: false,
     heal: false,
     in: false,
   });
+
+  const isAnyClicked = Object.values(isClicked).some((value) => value === true);
 
   const handlePress = (type: "none" | "heal" | "in") => {
     setIsClicked((prev) => {
@@ -33,6 +41,27 @@ export default function BloodInfo() {
         in: type === "in" ? !prev.in : prev.in,
       };
     });
+  };
+
+  const handleheal = (title: string) => {
+    if (title === "안함") {
+      handlePress("none");
+      setBlood((prev) => ({
+        ...prev,
+        heal: [],
+      }));
+      return;
+    }
+
+    if (title === "약") handlePress("heal");
+    if (title === "인슐린") handlePress("in");
+
+    setBlood((prev) => ({
+      ...prev,
+      heal: (prev.heal ?? []).includes(title)
+        ? (prev.heal ?? []).filter((item) => item !== title)
+        : [...(prev.heal ?? []), title],
+    }));
   };
 
   return (
@@ -64,7 +93,7 @@ export default function BloodInfo() {
                 styles.button,
                 isClicked.none ? styles.access : styles.disable,
               ]}
-              onPress={() => handlePress("none")}
+              onPress={() => handleheal("안함")}
             >
               <Text
                 style={[
@@ -80,7 +109,7 @@ export default function BloodInfo() {
                 styles.button,
                 isClicked.heal ? styles.access : styles.disable,
               ]}
-              onPress={() => handlePress("heal")}
+              onPress={() => handleheal("약")}
             >
               <Text
                 style={[
@@ -96,7 +125,7 @@ export default function BloodInfo() {
                 styles.button,
                 isClicked.in ? styles.access : styles.disable,
               ]}
-              onPress={() => handlePress("in")}
+              onPress={() => handleheal("인슐린")}
             >
               <Text
                 style={[
@@ -112,8 +141,14 @@ export default function BloodInfo() {
       </View>
       <View style={styles.buttonContainer}>
         <TouchableOpacity
-          style={[CommonStyle.button, styles.custom]}
+          style={[
+            CommonStyle.button,
+            blood.time?.length === 0 || !isAnyClicked
+              ? styles.uncustom
+              : styles.custom,
+          ]}
           onPress={() => navigation.navigate("BloodGoal")}
+          disabled={blood.time?.length === 0 || !isAnyClicked}
         >
           <Text style={texts.button}>다음</Text>
         </TouchableOpacity>
@@ -186,6 +221,12 @@ const styles = StyleSheet.create({
   },
   disableText: {
     color: "black",
+  },
+
+  uncustom: {
+    width: "90%",
+    height: 50,
+    backgroundColor: colors.Nobel,
   },
 });
 

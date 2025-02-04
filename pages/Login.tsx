@@ -8,18 +8,68 @@ import {
   KeyboardAvoidingView,
   Platform,
   useWindowDimensions,
+  Alert,
+  Keyboard,
 } from "react-native";
 
+import { useEffect, useState } from "react";
 import { colors, CommonStyle, fonts } from "../common";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "../types/stackType";
+import {
+  getAuth,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import { FIREBASE_AUTH } from "../firebaseConfig";
+import Toast from "react-native-toast-message";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useUserData } from "../hooks/useUserData";
+import { User, userData } from "../Atoms/userData";
+import { useRecoilState } from "recoil";
 
 const Logo = require("../assets/image/Logo.png");
 
 export default function Login() {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
+  const [data, setData] = useRecoilState<User>(userData);
   const windowWidth = useWindowDimensions().width;
+  const [id, setId] = useState("");
+  const [pw, setPw] = useState("");
+  const [isError, setIsError] = useState({
+    id: false,
+    pw: false,
+  });
+
+  const handleLogin = async () => {
+    const auth = getAuth();
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, id, pw);
+      const user = userCredential.user;
+      const accessToken = await user.getIdToken();
+      await AsyncStorage.setItem("accessToken", accessToken);
+      await AsyncStorage.setItem("id", id);
+
+      const userdata = await useUserData();
+
+      if (user) {
+        const formattedUser = {
+          id: userdata.id,
+          nickname: userdata.nickname,
+        };
+        setData(formattedUser);
+      }
+      Keyboard.dismiss();
+      const userObj = await useUserData();
+      userObj.hasOwnProperty("type")
+        ? navigation.navigate("Main")
+        : navigation.navigate("Welcome");
+    } catch (error) {
+      Alert.alert("알림", "아이디 또는 비밀번호가 일치하지 않습니다.");
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.logoContainer}>
@@ -36,7 +86,16 @@ export default function Login() {
         <View style={styles.mainContainer}>
           <View style={CommonStyle.input}>
             <Text style={texts.body}>아이디</Text>
-            <TextInput style={styles.input} placeholder="user@email.com" />
+
+            <TextInput
+              style={styles.input}
+              placeholder="user@email.com"
+              value={id}
+              onChangeText={setId}
+            />
+            {isError.id && (
+              <Text style={texts.warning}>아이디가 옳지 않습니다.</Text>
+            )}
           </View>
 
           <View style={CommonStyle.input}>
@@ -45,14 +104,16 @@ export default function Login() {
               style={styles.input}
               placeholder="******"
               secureTextEntry
+              value={pw}
+              onChangeText={setPw}
             />
+            {isError.pw && (
+              <Text style={texts.warning}>비밀번호가 옳지 않습니다.</Text>
+            )}
           </View>
 
           <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              style={CommonStyle.button}
-              onPress={() => navigation.navigate("Welcome")}
-            >
+            <TouchableOpacity style={CommonStyle.button} onPress={handleLogin}>
               <Text style={texts.buttonText}>들어가기</Text>
             </TouchableOpacity>
           </View>
@@ -118,6 +179,10 @@ const texts = StyleSheet.create({
   },
   body: {
     fontSize: fonts.body,
+  },
+  warning: {
+    fontSize: fonts.body,
+    color: colors.Error,
   },
   buttonText: {
     color: "#fff",

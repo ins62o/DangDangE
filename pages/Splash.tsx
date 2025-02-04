@@ -31,7 +31,7 @@ export default function Splash() {
 
   useEffect(() => {
     setTimeout(() => {
-      navigation.navigate("Login");
+      navigation.navigate("Main");
     }, 2500);
   }, []);
 

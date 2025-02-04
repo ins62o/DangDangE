@@ -9,6 +9,7 @@ import BloodGoal from "./pages/BloodGoal";
 import KeyboardModal from "./components/KeyboardModal";
 import Main from "./pages/Main";
 import RecordBlood from "./pages/RecordBlood";
+import Home from "./pages/Home";
 
 export const RootStack = createNativeStackNavigator({
   screens: {
@@ -69,7 +70,12 @@ export const RootStack = createNativeStackNavigator({
         headerShown: false,
       },
     },
-
+    Home: {
+      screen: Home,
+      options: {
+        headerShown: false,
+      },
+    },
     RecordBlood: {
       screen: RecordBlood,
       options: {
