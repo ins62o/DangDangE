@@ -37,3 +37,13 @@ export const BloodData = [
     onimage: fourBlood,
   },
 ];
+
+export const initialBlood: {
+  [key: string]: number[];
+} = {
+  "🌚 식전 혈당(공복)": [80, 130],
+  "🔆 아침 식후 2시간 혈당": [90, 180],
+  "⛅ 점심 식후 2시간 혈당": [90, 180],
+  "🌙 저녁 식후 2시간 혈당": [90, 180],
+  "🛏 취침 전 혈당": [100, 140],
+};
