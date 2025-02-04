@@ -1,3 +1,4 @@
+import { Dispatch, SetStateAction } from "react";
 import {
   Image,
   StyleSheet,
@@ -19,6 +20,7 @@ type BloodType = {
 type BloodTypeBoxProps = {
   data: BloodType;
   isClicked: boolean;
+  setTitle: Dispatch<SetStateAction<string>>;
   onPress: () => void;
 };
 
@@ -26,12 +28,19 @@ export default function BloodTypeBox({
   data,
   isClicked,
   onPress,
+  setTitle,
 }: BloodTypeBoxProps) {
   const { title, info, offimage, onimage } = data;
   const dynamicStyle = isClicked ? styles.Onbackground : styles.Offbackground;
   const dynamicText = isClicked ? texts.black : texts.title;
+
+  const handleData = () => {
+    onPress();
+    setTitle(title);
+  };
+
   return (
-    <Pressable style={[styles.container, dynamicStyle]} onPress={onPress}>
+    <Pressable style={[styles.container, dynamicStyle]} onPress={handleData}>
       <View style={styles.imageContainer}>
         <Image source={isClicked ? onimage : offimage} />
       </View>

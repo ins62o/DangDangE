@@ -6,21 +6,27 @@ import {
   TouchableOpacity,
   Animated,
   Pressable,
-  useWindowDimensions,
 } from "react-native";
 import { colors, CommonStyle, fonts } from "../common";
 import Keyboard from "./Keyboard";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+import { Blood, userBloodData } from "../Atoms/bloodData";
+import { useRecoilState } from "recoil";
 
 type keyboardProps = {
   setIsModal: React.Dispatch<React.SetStateAction<boolean>>;
+  title: string;
+  type: string;
 };
 
-export default function KeyboardModal({ setIsModal }: keyboardProps) {
-  const windowHeight = useWindowDimensions().height;
-  console.log(windowHeight);
-  const slide = useRef(new Animated.Value(600));
+export default function KeyboardModal({
+  setIsModal,
+  title,
+  type,
+}: keyboardProps) {
+  const [blood, setBlood] = useRecoilState<Blood>(userBloodData);
 
+  const slide = useRef(new Animated.Value(600));
   const slideUp = () => {
     Animated.timing(slide.current, {
       toValue: 0,
@@ -46,7 +52,29 @@ export default function KeyboardModal({ setIsModal }: keyboardProps) {
     <FontAwesome5 name="backspace" size={24} color="black" />
   );
   const changeText = (numberText: string) =>
-    setText((prev) => prev + numberText);
+    setText((prev) => (prev === "0" ? numberText : prev + numberText));
+
+  const deleteText = () => {
+    setText((prev) => (prev.length > 1 ? prev.slice(0, -1) : "0"));
+  };
+
+  const clearText = () => setText("0");
+
+  const handleSave = () => {
+    const index = blood.time.indexOf(title);
+    setBlood((prev) => ({
+      ...prev,
+      goal: {
+        ...prev.goal,
+        [index]:
+          type === "min"
+            ? [+text, prev.goal[index][1]]
+            : [prev.goal[index][0], +text],
+      },
+    }));
+
+    setIsModal(false);
+  };
 
   const closeModal = () => {
     slideDown();
@@ -57,7 +85,6 @@ export default function KeyboardModal({ setIsModal }: keyboardProps) {
 
   return (
     <Pressable style={styles.container} onPress={closeModal}>
-      <Pressable></Pressable>
       <Animated.View
         style={[
           styles.keyboardContainer,
@@ -66,7 +93,7 @@ export default function KeyboardModal({ setIsModal }: keyboardProps) {
       >
         <Pressable style={styles.noneEventContainer}>
           <View style={styles.titleContainer}>
-            <Text style={texts.title}>식전 혈당(공복)</Text>
+            <Text style={texts.title}>목표 혈당을 입력해주세요.</Text>
           </View>
           <View style={styles.viewContainer}>
             <Text style={texts.view}>{text}</Text>
@@ -88,13 +115,16 @@ export default function KeyboardModal({ setIsModal }: keyboardProps) {
               <Keyboard buttonText="9" changeText={changeText} />
             </View>
             <View style={styles.numberContainer}>
-              <Keyboard buttonText="C" changeText={changeText} />
-              <Keyboard buttonText="8" changeText={changeText} />
-              <Keyboard buttonText={back} changeText={changeText} />
+              <Keyboard buttonText="C" changeText={clearText} />
+              <Keyboard buttonText="0" changeText={changeText} />
+              <Keyboard buttonText={back} changeText={deleteText} />
             </View>
           </View>
           <View style={styles.buttonContainer}>
-            <TouchableOpacity style={[CommonStyle.button, styles.custombutton]}>
+            <TouchableOpacity
+              style={[CommonStyle.button, styles.custombutton]}
+              onPress={handleSave}
+            >
               <Text style={texts.button}>저장</Text>
             </TouchableOpacity>
           </View>
@@ -149,6 +179,7 @@ const styles = StyleSheet.create({
 
   custombutton: {
     width: "90%",
+    height: 50,
     backgroundColor: colors.Main,
   },
 
@@ -175,6 +206,6 @@ const texts = StyleSheet.create({
 
   view: {
     fontSize: fonts.Headline,
-    color: colors.Nobel,
+    color: colors.DimGrey,
   },
 });

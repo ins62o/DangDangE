@@ -1,12 +1,6 @@
 import React from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  TouchableOpacity,
-} from "react-native";
-import { colors, fonts } from "../common";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { fonts } from "../common";
 
 type KeyboardProps = {
   buttonText: string | JSX.Element;
@@ -14,9 +8,14 @@ type KeyboardProps = {
 };
 
 export default function Keyboard({ buttonText, changeText }: KeyboardProps) {
+  const renderText = typeof buttonText === "string" ? buttonText : "";
+
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => changeText(renderText)}
+      >
         <Text style={texts.button}>{buttonText}</Text>
       </TouchableOpacity>
     </View>

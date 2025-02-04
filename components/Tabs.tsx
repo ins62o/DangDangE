@@ -1,15 +1,26 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Login from "../pages/Login";
-import BloodGoal from "../pages/BloodGoal";
 import { colors } from "../common";
 import Entypo from "@expo/vector-icons/Entypo";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Home from "../pages/Home";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import More from "../pages/More";
 
 const Tab = createBottomTabNavigator();
 
 export default function Tabs() {
+  const [token, setToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    const getToken = async () => {
+      const tok = await AsyncStorage.getItem("accessToken");
+      setToken(tok);
+    };
+    getToken();
+  }, []);
+
   return (
     <Tab.Navigator
       screenOptions={{
@@ -20,8 +31,8 @@ export default function Tabs() {
       }}
     >
       <Tab.Screen
-        name="Login"
-        component={Login}
+        name="Home"
+        component={Home}
         options={{
           title: "홈",
           tabBarIcon: ({ color, size }) => (
@@ -34,8 +45,8 @@ export default function Tabs() {
         }}
       />
       <Tab.Screen
-        name="Home"
-        component={Home}
+        name="More"
+        component={More}
         options={{
           title: "더보기",
           tabBarIcon: ({ color, size }) => (

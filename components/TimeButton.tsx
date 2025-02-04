@@ -1,6 +1,8 @@
+import { Dispatch, SetStateAction, useState } from "react";
 import { Pressable, StyleSheet, Text } from "react-native";
-import React, { useState } from "react";
 import { colors } from "../common";
+import { useRecoilState } from "recoil";
+import { Blood, userBloodData } from "../Atoms/bloodData";
 
 type TimeButtonProps = {
   title: string;
@@ -8,7 +10,16 @@ type TimeButtonProps = {
 
 export default function TimeButton({ title }: TimeButtonProps) {
   const [isClicked, setIsClicked] = useState(false);
-  const handleClick = () => setIsClicked((prev) => !prev);
+  const [blood, setBlood] = useRecoilState<Blood>(userBloodData);
+  const handleClick = () => {
+    setIsClicked((prev) => !prev);
+    setBlood((prev) => ({
+      ...prev,
+      time: prev.time?.includes(title)
+        ? prev.time.filter((item) => item !== title)
+        : [...(prev.time ?? []), title],
+    }));
+  };
 
   const dynamicStyle = isClicked ? styles.access : styles.disable;
   const dynamicText = isClicked ? texts.accessText : texts.disableText;
