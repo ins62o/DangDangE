@@ -7,5 +7,5 @@ export type User = {
 
 export const userData = atom<User>({
   key: "userData",
-  default: { id: "", nickname: "" },
+  default: { id: "로그인이 필요합니다.", nickname: "게스트" },
 });
