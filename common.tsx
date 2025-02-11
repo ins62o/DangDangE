@@ -25,9 +25,8 @@ export const CommonStyle = StyleSheet.create({
   input: {
     backgroundColor: "#fff",
     width: "80%",
-    height: 45,
     marginBottom: 10,
-    padding: 10,
+    padding: Platform.OS === "ios" ? 20 : 15,
     borderRadius: 8,
     shadowColor: "rgba(0, 0, 0, 0.2)",
     shadowOffset: { width: 0, height: 10 },
@@ -38,7 +37,7 @@ export const CommonStyle = StyleSheet.create({
 
   button: {
     width: "100%",
-    height: 40,
+    height: Platform.OS === "ios" ? 50 : 40,
     borderRadius: 8,
     justifyContent: "center",
     backgroundColor: colors.Main,
@@ -52,7 +51,7 @@ export const MyText = (props: any) => {
       {...props}
       style={{
         ...props.style,
-        fontFamily: "NanumGothic",
+        fontFamily: "Pretendard-Regular",
       }}
     >
       {props.children}

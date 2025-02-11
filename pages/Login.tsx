@@ -4,7 +4,6 @@ import {
   Platform,
   Pressable,
   StyleSheet,
-  Text,
   TextInput,
   View,
 } from "react-native";
@@ -91,11 +90,10 @@ export default function Login({ setMode, setIsModal, setTitle }: LoginProps) {
   return (
     <>
       <View style={styles.textContainer}>
-        <Text style={texts.info}>
+        <MyText style={texts.info}>
           {loading ? text : "로그인 후 서비스를 사용해보세요."}
-        </Text>
-      </View>
-      <View style={styles.inputContainer}>
+        </MyText>
+
         <TextInput
           style={CommonStyle.input}
           placeholder="아이디"
@@ -110,12 +108,13 @@ export default function Login({ setMode, setIsModal, setTitle }: LoginProps) {
           secureTextEntry
         />
         <Pressable style={styles.button} onPress={handleLogin}>
-          <Text style={texts.login}>로그인</Text>
+          <MyText style={texts.login}>로그인</MyText>
+        </Pressable>
+
+        <Pressable style={styles.signUpContainer} onPress={() => setMode(true)}>
+          <MyText style={texts.signUp}>당당이가 처음이라면 ?</MyText>
         </Pressable>
       </View>
-      <Pressable style={styles.signUpContainer} onPress={() => setMode(true)}>
-        <Text style={texts.signUp}>당당이가 처음이라면 ?</Text>
-      </Pressable>
     </>
   );
 }
@@ -125,40 +124,21 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 
-  closeContainer: {
-    flex: 0.1,
-    justifyContent: "center",
-    alignItems: "flex-end",
-    paddingRight: 20,
-  },
-
-  LogoContainer: {
-    flex: 0.1,
-    alignItems: "center",
-  },
-
-  logo: {
-    height: "100%",
-  },
-
   textContainer: {
-    flex: 0.05,
-  },
-
-  inputContainer: {
-    flex: 0.25,
+    flex: 0.5,
     alignItems: "center",
   },
 
   button: {
     width: "80%",
-    padding: 15,
-    backgroundColor: colors.Main,
     borderRadius: 8,
+    backgroundColor: colors.Main,
+    padding: Platform.OS === "ios" ? 15 : 10,
+    marginTop: 10,
   },
 
   signUpContainer: {
-    marginTop: Platform.OS === "android" ? 20 : 0,
+    marginTop: 20,
   },
 });
 
@@ -166,17 +146,16 @@ const texts = StyleSheet.create({
   info: {
     fontSize: fonts.body,
     textAlign: "center",
+    marginBottom: 15,
   },
 
   login: {
-    textAlign: "center",
+    fontSize: fonts.body,
     color: "#fff",
+    textAlign: "center",
   },
 
   signUp: {
-    textAlign: "center",
-    color: colors.Main,
-    fontFamily: "NanumGothic",
-    fontWeight: "bold",
+    fontSize: fonts.body,
   },
 });

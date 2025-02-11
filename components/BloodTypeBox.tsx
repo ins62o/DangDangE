@@ -6,8 +6,9 @@ import {
   View,
   ImageSourcePropType,
   Pressable,
+  Platform,
 } from "react-native";
-import { colors, fonts } from "../common";
+import { colors, fonts, MyText } from "../common";
 
 type BloodType = {
   id: string;
@@ -66,7 +67,7 @@ const styles = StyleSheet.create({
     shadowRadius: 20,
     elevation: 5,
     flexDirection: "row",
-    padding: 10,
+    padding: Platform.OS === "ios" ? 15 : 10,
   },
   Onbackground: {
     backgroundColor: colors.Sub2,

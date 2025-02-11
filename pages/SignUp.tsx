@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import {
   Pressable,
   StyleSheet,
-  Text,
   TextInput,
   View,
   Keyboard,
+  Platform,
 } from "react-native";
-import { colors, CommonStyle, fonts } from "../common";
+import { colors, CommonStyle, fonts, MyText } from "../common";
 import { isNicknameTaken } from "../utils/SignUp/isNicknameTaken";
 import { createUser } from "../utils/SignUp/createUser";
 
@@ -72,11 +72,11 @@ export default function SignUp({ setMode, setIsModal, setTitle }: SignProps) {
   return (
     <>
       <View style={styles.textContainer}>
-        <Text style={texts.info}>
+        <MyText style={texts.info}>
           {loading
             ? "회원님의 이메일과 비밀번호를 확인하고 있습니다."
             : "회원가입 후 서비스를 사용해보세요."}
-        </Text>
+        </MyText>
       </View>
       <View style={styles.inputContainer}>
         <TextInput
@@ -99,7 +99,7 @@ export default function SignUp({ setMode, setIsModal, setTitle }: SignProps) {
           secureTextEntry
         />
         <Pressable style={styles.button} onPress={handleSignUp}>
-          <Text style={texts.login}>회원가입</Text>
+          <MyText style={texts.login}>회원가입</MyText>
         </Pressable>
       </View>
     </>
@@ -138,10 +138,10 @@ const styles = StyleSheet.create({
 
   button: {
     width: "80%",
-    padding: 15,
-    backgroundColor: colors.Main,
     borderRadius: 8,
-    marginTop: 15,
+    backgroundColor: colors.Main,
+    padding: Platform.OS === "ios" ? 15 : 10,
+    marginTop: 10,
   },
 
   signUpContainer: {
@@ -151,12 +151,12 @@ const styles = StyleSheet.create({
 
 const texts = StyleSheet.create({
   info: {
-    fontSize: fonts.content,
-    color: colors.Grey,
+    fontSize: fonts.body,
     textAlign: "center",
   },
 
   login: {
+    fontSize: fonts.body,
     textAlign: "center",
     color: "#fff",
   },
