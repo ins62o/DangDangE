@@ -16,15 +16,15 @@ export default function InfoModal({ setIsModal }: Modal) {
     <View style={styles.container}>
       <View style={styles.modal}>
         <View style={styles.textContainer}>
-          <Text style={texts.title}>당화혈 색소 기준 (참고용)</Text>
-          <Text style={texts.info}>5.6% 이하 → 정상</Text>
-          <Text style={texts.info}>5.7% ~ 6.4% → 당뇨 전단계</Text>
-          <Text style={texts.info}>6.5% 이상 → 당뇨 가능성 있음</Text>
-          <Text style={texts.etc}>
+          <MyText style={texts.title}>당화혈 색소 기준 (참고용)</MyText>
+          <MyText style={texts.info}>5.6% 이하 → 정상</MyText>
+          <MyText style={texts.info}>5.7% ~ 6.4% → 당뇨 전단계</MyText>
+          <MyText style={texts.info}>6.5% 이상 → 당뇨 가능성 있음</MyText>
+          <MyText style={texts.etc}>
             본 데이터는 하루 평균 혈당을 기반으로 계산된 참고용 수치입니다.
             정확한 당화혈색소(HbA1c) 수치는 2~3개월 동안의 평균 혈당을 반영해야
             합니다.
-          </Text>
+          </MyText>
         </View>
         <AntDesign
           name="close"
@@ -53,39 +53,19 @@ const styles = StyleSheet.create({
 
   modal: {
     width: "80%",
-    height: "40%",
     backgroundColor: "#fff",
+    padding: 20,
     borderRadius: 8,
     alignItems: "center",
-  },
-
-  textContainer: {
-    width: "80%",
-    flex: 1,
-    flexDirection: "column",
-    justifyContent: "space-between",
-  },
-
-  button: {
-    width: "80%",
-    height: 50,
-    backgroundColor: colors.WhiteSmoke,
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 8,
-  },
-
-  okbutton: {
-    backgroundColor: colors.Main,
-    marginLeft: 10,
   },
 
   close: {
     position: "absolute",
-    top: 0,
     right: 0,
     padding: 10,
   },
+
+  textContainer: {},
 });
 
 const texts = StyleSheet.create({
@@ -93,13 +73,14 @@ const texts = StyleSheet.create({
     fontSize: fonts.Subline,
     fontWeight: "bold",
     textAlign: "center",
-    marginTop: 20,
+    marginBottom: 20,
   },
 
   info: {
     fontSize: fonts.body,
     color: colors.DimGrey,
     textAlign: "center",
+    lineHeight: 25,
   },
 
   ok: {
@@ -108,7 +89,7 @@ const texts = StyleSheet.create({
 
   etc: {
     fontSize: fonts.description,
-    marginTop: 20,
+    marginTop: 30,
     textAlign: "center",
     lineHeight: 20,
     marginBottom: 10,

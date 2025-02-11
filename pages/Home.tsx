@@ -108,12 +108,12 @@ export default function Home() {
     <SafeAreaView style={styles.container}>
       <MainCalendar />
       <View style={styles.contentContainer}>
-        <View style={[styles.content, { height: (windowHeight / 2) * 0.5 }]}>
+        <View style={[styles.content, { height: (windowHeight / 2) * 0.6 }]}>
           <View style={styles.profileContainer}>
             <MyText style={texts.nickname}>
               {user ? user?.nickname : "게스트"}님 환영합니다.
             </MyText>
-            <MyText style={texts.badge}>{N}일째 관리 중</MyText>
+            <MyText style={texts.badge}>{N ? N : 0}일째 관리 중</MyText>
           </View>
 
           <View style={styles.paperContainer}>
@@ -190,6 +190,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.Sub2,
     borderRadius: 8,
     justifyContent: "center",
+    padding: Platform.OS === "ios" ? 20 : 15,
   },
 
   corner: {
@@ -242,7 +243,7 @@ const texts = StyleSheet.create({
   },
 
   nickname: {
-    fontSize: fonts.Subline,
+    fontSize: fonts.Headline,
     paddingLeft: 10,
   },
 
@@ -251,11 +252,11 @@ const texts = StyleSheet.create({
   },
 
   record: {
+    fontSize: fonts.body,
     fontWeight: "bold",
   },
 
   motive: {
     fontSize: fonts.body,
-    padding: 10,
   },
 });

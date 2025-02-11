@@ -1,4 +1,5 @@
 import {
+  Platform,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -58,7 +59,7 @@ export default function More() {
           >
             <Feather
               name="settings"
-              size={24}
+              size={20}
               color={ischecked ? colors.Nobel : "plum"}
             />
             <MyText style={ischecked ? texts.unmenu : texts.menu}>
@@ -79,7 +80,7 @@ export default function More() {
           >
             <AntDesign
               name="deleteuser"
-              size={24}
+              size={20}
               color={ischecked ? colors.Nobel : "red"}
             />
             <MyText style={ischecked ? texts.unmenu : texts.menu}>
@@ -100,7 +101,7 @@ export default function More() {
                     )
             }
           >
-            <AntDesign name="logout" size={24} color="orange" />
+            <AntDesign name="logout" size={20} color="orange" />
             <MyText style={texts.menu}>
               {ischecked ? "로그인" : "로그아웃"}
             </MyText>
@@ -129,15 +130,13 @@ const styles = StyleSheet.create({
 
   menuContainer: {
     flex: 0.2,
-    padding: 20,
+    alignItems: "center",
   },
 
   menu: {
-    borderWidth: 1,
     borderRadius: 8,
-    borderColor: colors.WhiteSmoke,
     flexDirection: "row",
-    height: 100,
+    width: "80%",
   },
 
   button: {
@@ -145,6 +144,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: colors.WhiteSmoke,
+    padding: Platform.OS === "ios" ? 20 : 15,
   },
 });
 
@@ -162,10 +162,12 @@ const texts = StyleSheet.create({
   },
 
   menu: {
+    fontSize: fonts.body,
     marginTop: 7,
   },
 
   unmenu: {
+    fontSize: fonts.body,
     marginTop: 7,
     color: colors.Nobel,
   },

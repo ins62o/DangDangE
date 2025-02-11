@@ -15,8 +15,8 @@ export const colors = {
 };
 
 export const fonts = {
-  Headline: Platform.OS === "ios" ? 24 : 18,
-  Subline: Platform.OS === "ios" ? 18 : 14,
+  Headline: Platform.OS === "ios" ? 22 : 18,
+  Subline: Platform.OS === "ios" ? 18 : 16,
   body: Platform.OS === "ios" ? 14 : 12,
   description: Platform.OS === "ios" ? 12 : 10,
 };
