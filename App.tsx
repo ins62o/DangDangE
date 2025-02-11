@@ -44,7 +44,8 @@ export default function App() {
   useEffect(() => {
     async function loadFonts() {
       await Font.loadAsync({
-        NanumGothic: require("./assets/fonts/Pretendard-Regular.otf"),
+        "Pretendard-Regular": require("./assets/fonts/Pretendard-Regular.otf"),
+        "Pretendard-Bold": require("./assets/fonts/Pretendard-Bold.otf"),
       });
     }
 
