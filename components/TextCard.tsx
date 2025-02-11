@@ -1,5 +1,5 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { fonts } from "../common";
+import { fonts, MyText } from "../common";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 type MemoProps = {
@@ -11,7 +11,7 @@ export default function TextCard({ setIsMemo, memo }: MemoProps) {
   return (
     <TouchableOpacity style={styles.container} onPress={() => setIsMemo(true)}>
       <View style={styles.textContainer}>
-        <Text style={texts.text}>메모장</Text>
+        <MyText style={texts.text}>메모장</MyText>
         <MaterialCommunityIcons
           name="clipboard-text-outline"
           size={24}
@@ -19,9 +19,9 @@ export default function TextCard({ setIsMemo, memo }: MemoProps) {
         />
       </View>
       <View style={styles.textViewContainer}>
-        <Text style={texts.memo}>
+        <MyText style={texts.memo}>
           {memo === "" ? "메모장을 누르고 적어보세요." : memo}
-        </Text>
+        </MyText>
       </View>
     </TouchableOpacity>
   );
@@ -56,6 +56,6 @@ const texts = StyleSheet.create({
 
   memo: {
     marginTop: 5,
-    fontSize: fonts.content,
+    fontSize: fonts.body,
   },
 });

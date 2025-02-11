@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useMemo, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import { colors, fonts } from "../common";
+import { colors, fonts, MyText } from "../common";
 import BloodCard from "../components/BloodCard";
 import TextCard from "../components/TextCard";
 import { RouteProp, useNavigation } from "@react-navigation/native";

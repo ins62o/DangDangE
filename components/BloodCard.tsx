@@ -1,5 +1,5 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { colors, fonts } from "../common";
+import { colors, fonts, MyText } from "../common";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { useEffect, useState } from "react";
 import { userType } from "../types/userType";
@@ -31,14 +31,14 @@ export default function BloodCard({
   return (
     <TouchableOpacity style={styles.container} onPress={handleClick}>
       <View style={styles.titleContainer}>
-        <Text style={texts.title}>{title}</Text>
+        <MyText style={texts.title}>{title}</MyText>
       </View>
       <View style={styles.tagContainer}>
         <Text style={[texts.tag, { color }]}>{text}</Text>
       </View>
       <View style={styles.iconContainer}>
         <View style={styles.blood}>
-          <Text style={texts.blood}>{blood ?? 0}</Text>
+          <MyText style={texts.blood}>{blood ?? 0}</MyText>
           <FontAwesome5 name="plus" size={24} color="black" />
         </View>
       </View>
@@ -89,16 +89,16 @@ const styles = StyleSheet.create({
 
 const texts = StyleSheet.create({
   title: {
-    fontSize: fonts.Subline,
+    fontSize: fonts.body,
   },
 
   tag: {
-    fontSize: fonts.content,
+    fontSize: fonts.body,
     fontWeight: "bold",
-    color: colors.Grey,
+    color: colors.Nobel,
   },
 
   blood: {
-    fontSize: fonts.Headline,
+    fontSize: fonts.Subline,
   },
 });
