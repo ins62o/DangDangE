@@ -1,8 +1,8 @@
 import { atom } from "recoil";
 
 export type User = {
-  id: string;
-  nickname: string;
+  id?: string;
+  nickname?: string;
 };
 
 export const userData = atom<User>({

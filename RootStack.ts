@@ -10,6 +10,7 @@ import KeyboardModal from "./components/KeyboardModal";
 import Main from "./pages/Main";
 import RecordBlood from "./pages/RecordBlood";
 import Home from "./pages/Home";
+import LoginSignUp from "./pages/LoginSignUp";
 
 export const RootStack = createNativeStackNavigator({
   screens: {
@@ -78,6 +79,12 @@ export const RootStack = createNativeStackNavigator({
     },
     RecordBlood: {
       screen: RecordBlood,
+      options: {
+        headerShown: false,
+      },
+    },
+    LoginSignUp: {
+      screen: LoginSignUp,
       options: {
         headerShown: false,
       },

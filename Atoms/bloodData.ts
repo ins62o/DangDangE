@@ -5,7 +5,7 @@ export type Blood = {
   time: string[];
   heal: string[];
   goal: {
-    [key: number]: [number, number];
+    [key: string]: [number, number];
   };
 };
 
@@ -16,11 +16,11 @@ export const userBloodData = atom<Blood>({
     time: [],
     heal: [],
     goal: {
-      0: [80, 130],
-      1: [90, 180],
-      2: [90, 180],
-      3: [90, 180],
-      4: [100, 140],
+      "🌚 식전 혈당(공복)": [80, 130],
+      "🔆 아침 식후 2시간 혈당": [90, 180],
+      "⛅ 점심 식후 2시간 혈당": [90, 180],
+      "🌙 저녁 식후 2시간 혈당": [90, 180],
+      "🛏 취침 전 혈당": [100, 140],
     },
   },
 });

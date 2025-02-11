@@ -1,4 +1,6 @@
-import { StyleSheet, Platform } from "react-native";
+import { StyleSheet, Platform, Text } from "react-native";
+import * as Font from "expo-font";
+import { useEffect, useState } from "react";
 
 export const colors = {
   Main: "#2C6975",
@@ -13,8 +15,8 @@ export const colors = {
 };
 
 export const fonts = {
-  Headline: Platform.OS === "ios" ? 26 : 18,
-  Subline: Platform.OS === "ios" ? 20 : 14,
+  Headline: Platform.OS === "ios" ? 24 : 18,
+  Subline: Platform.OS === "ios" ? 18 : 14,
   body: Platform.OS === "ios" ? 14 : 12,
   description: Platform.OS === "ios" ? 12 : 10,
 };
@@ -23,7 +25,8 @@ export const CommonStyle = StyleSheet.create({
   input: {
     backgroundColor: "#fff",
     width: "80%",
-    marginBottom: 25,
+    height: 45,
+    marginBottom: 10,
     padding: 10,
     borderRadius: 8,
     shadowColor: "rgba(0, 0, 0, 0.2)",
@@ -42,3 +45,17 @@ export const CommonStyle = StyleSheet.create({
     alignItems: "center",
   },
 });
+
+export const MyText = (props: any) => {
+  return (
+    <Text
+      {...props}
+      style={{
+        ...props.style,
+        fontFamily: "NanumGothic",
+      }}
+    >
+      {props.children}
+    </Text>
+  );
+};
