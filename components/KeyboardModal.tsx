@@ -7,25 +7,22 @@ import {
   Animated,
   Pressable,
 } from "react-native";
-import { colors, CommonStyle, fonts } from "../common";
+import { colors, CommonStyle, fonts, MyText } from "../common";
 import Keyboard from "./Keyboard";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { Blood, userBloodData } from "../Atoms/bloodData";
 import { useRecoilState } from "recoil";
-import { writeData } from "../Atoms/writeData";
 import { BloodData } from "../pages/RecordBlood";
 import { userType } from "../types/userType";
-import { times } from "../InitialData";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getWeek } from "../utils/dateFn";
 
 type keyboardProps = {
   setIsModal: React.Dispatch<React.SetStateAction<boolean>>;
-  setBloodData: React.Dispatch<React.SetStateAction<BloodData | null>>;
+  setBloodData?: React.Dispatch<React.SetStateAction<BloodData | null>>;
   title?: string;
   type?: string;
   mode?: string;
-  userData: userType | null;
+  userData?: userType | null;
 };
 
 export default function KeyboardModal({
@@ -73,15 +70,14 @@ export default function KeyboardModal({
   const clearText = () => setText("0");
 
   const handleSave = () => {
-    const index = blood.time.indexOf(title as string);
     setBlood((prev) => ({
       ...prev,
       goal: {
         ...prev.goal,
-        [index]:
+        [title as string]:
           type === "min"
-            ? [+text, prev.goal[index][1]]
-            : [prev.goal[index][0], +text],
+            ? [+text, prev.goal[title as string][1]]
+            : [prev.goal[title as string][0], +text],
       },
     }));
 
@@ -101,28 +97,30 @@ export default function KeyboardModal({
     const week = String(getWeek(new Date()));
     if (!week) return;
 
-    setBloodData((prev) => {
-      const timesArray = userData?.time ?? [];
+    if (setBloodData) {
+      setBloodData((prev) => {
+        const timesArray = userData?.time ?? [];
 
-      // 🟢 기존 데이터가 없을 경우 → 초기화
-      if (!prev || !prev.blood) {
-        const initialBlood = Object.fromEntries(
-          timesArray.map((time) => [time, "0"])
-        );
+        // 🟢 기존 데이터가 없을 경우 → 초기화
+        if (!prev || !prev.blood) {
+          const initialBlood = Object.fromEntries(
+            timesArray.map((time) => [time, "0"])
+          );
+          return {
+            blood: { ...initialBlood, [title]: text },
+            memo: prev?.memo ?? "", // memo가 없으면 빈 문자열 할당
+            week,
+          };
+        }
+
+        // 🟢 기존 데이터가 있는 경우 → 업데이트
         return {
-          blood: { ...initialBlood, [title]: text },
-          memo: prev?.memo ?? "", // memo가 없으면 빈 문자열 할당
-          week,
+          blood: { ...prev.blood, [title]: text },
+          memo: prev.memo ?? "",
+          week: prev.week ?? week,
         };
-      }
-
-      // 🟢 기존 데이터가 있는 경우 → 업데이트
-      return {
-        blood: { ...prev.blood, [title]: text },
-        memo: prev.memo ?? "",
-        week: prev.week ?? week,
-      };
-    });
+      });
+    }
 
     setIsModal(false);
   };
@@ -137,7 +135,7 @@ export default function KeyboardModal({
       >
         <Pressable style={styles.noneEventContainer}>
           <View style={styles.titleContainer}>
-            <Text style={texts.title}>혈당을 입력해주세요.</Text>
+            <MyText style={texts.title}>혈당을 입력해주세요.</MyText>
           </View>
           <View style={styles.viewContainer}>
             <Text style={texts.view}>{text}</Text>
@@ -250,6 +248,5 @@ const texts = StyleSheet.create({
 
   view: {
     fontSize: fonts.Headline,
-    color: colors.Grey,
   },
 });
