@@ -6,14 +6,18 @@ import {
   query,
   where,
 } from "firebase/firestore";
+import { userType } from "../types/userType";
 
-export const useUserData = async () => {
+export const useUserData = async (): Promise<userType | null> => {
   const db = getFirestore();
   const userRef = collection(db, "users");
   const id = await AsyncStorage.getItem("id");
+  if (!id) return null;
+
   const q = query(userRef, where("id", "==", id));
   const querySnapshot = await getDocs(q);
-  const userData = querySnapshot.docs[0].data();
 
-  return userData;
+  if (querySnapshot.empty) return null;
+
+  return querySnapshot.docs[0].data() as userType;
 };

@@ -1,197 +1,182 @@
+import React, { useState } from "react";
 import {
-  Text,
-  View,
-  StyleSheet,
-  Image,
-  TextInput,
-  TouchableOpacity,
-  KeyboardAvoidingView,
-  Platform,
-  useWindowDimensions,
-  Alert,
   Keyboard,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
 } from "react-native";
-
-import { useEffect, useState } from "react";
-import { colors, CommonStyle, fonts } from "../common";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { StackParamList } from "../types/stackType";
-import {
-  getAuth,
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
-import { FIREBASE_AUTH } from "../firebaseConfig";
-import Toast from "react-native-toast-message";
+import { colors, CommonStyle, fonts, MyText } from "../common";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useUserData } from "../hooks/useUserData";
+import { useSetRecoilState } from "recoil";
 import { User, userData } from "../Atoms/userData";
-import { useRecoilState } from "recoil";
+import { FIREBASE_AUTH } from "../firebaseConfig";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { StackParamList } from "../types/stackType";
+import { useNavigation } from "@react-navigation/native";
 
-const Logo = require("../assets/image/Logo.png");
+type LoginProps = {
+  setMode: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setTitle: React.Dispatch<React.SetStateAction<string>>;
+};
 
-export default function Login() {
+export default function Login({ setMode, setIsModal, setTitle }: LoginProps) {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
-  const [data, setData] = useRecoilState<User>(userData);
-  const windowWidth = useWindowDimensions().width;
+  const setData = useSetRecoilState<User>(userData);
+  const [loading, setLoading] = useState(false);
   const [id, setId] = useState("");
   const [pw, setPw] = useState("");
-  const [isError, setIsError] = useState({
-    id: false,
-    pw: false,
-  });
+  const [text, setText] = useState("로그인 시도중입니다..");
+  const auth = FIREBASE_AUTH;
 
   const handleLogin = async () => {
-    const auth = getAuth();
+    // 1. 키보드 내리고 아이디 패스워드 입력했는지 확인
+    Keyboard.dismiss();
+    if (id.length === 0) {
+      setIsModal(true);
+      setTitle("아이디를 입력해주세요.");
+      Keyboard.dismiss();
+      return;
+    }
+
+    if (pw.length === 0) {
+      setIsModal(true);
+      setTitle("비밀번호를 입력해주세요.");
+      Keyboard.dismiss();
+      return;
+    }
+
+    // 2. 로그인 중 텍스트 출력
+    setLoading(true);
+
     try {
+      // 3. 파이어베이스 로그인 시도
       const userCredential = await signInWithEmailAndPassword(auth, id, pw);
       const user = userCredential.user;
+
+      // 4. 액세스 토큰 - AsyncStorage 저장
       const accessToken = await user.getIdToken();
       await AsyncStorage.setItem("accessToken", accessToken);
       await AsyncStorage.setItem("id", id);
+      setText("사용자 정보를 담고 있습니다..");
 
-      const userdata = await useUserData();
-
+      // 5. 파이어베이스에 유저가 있을 시 해당 유저의 데이터 - Recoil Atoms 저장
       if (user) {
-        const formattedUser = {
-          id: userdata.id,
-          nickname: userdata.nickname,
-        };
-        setData(formattedUser);
+        const userdata = await useUserData();
+        setData((prev) => ({
+          ...prev,
+          id: userdata?.id,
+          nickname: userdata?.nickname,
+        }));
+
+        // 5.1 기존 텍스트로 변경 후 페이지 네비게이션 진행
+        setLoading(false);
+        userdata?.hasOwnProperty("type")
+          ? navigation.navigate("Tabs")
+          : navigation.navigate("Welcome");
       }
+    } catch (err) {
+      setIsModal(true);
+      setTitle("아이디 또는 비밀번호가 일치하지 않습니다.");
       Keyboard.dismiss();
-      const userObj = await useUserData();
-      userObj.hasOwnProperty("type")
-        ? navigation.navigate("Main")
-        : navigation.navigate("Welcome");
-    } catch (error) {
-      Alert.alert("알림", "아이디 또는 비밀번호가 일치하지 않습니다.");
+      setLoading(false);
     }
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.logoContainer}>
-        <Image
-          source={Logo}
-          style={[styles.logo, { width: windowWidth > 900 ? "50%" : "100%" }]}
-          resizeMode="cover"
-        />
+    <>
+      <View style={styles.textContainer}>
+        <Text style={texts.info}>
+          {loading ? text : "로그인 후 서비스를 사용해보세요."}
+        </Text>
       </View>
-      <KeyboardAvoidingView style={styles.loginContainer} behavior="padding">
-        <View style={styles.titleContainer}>
-          <Text style={texts.title}>로그인</Text>
-        </View>
-        <View style={styles.mainContainer}>
-          <View style={CommonStyle.input}>
-            <Text style={texts.body}>아이디</Text>
-
-            <TextInput
-              style={styles.input}
-              placeholder="user@email.com"
-              value={id}
-              onChangeText={setId}
-            />
-            {isError.id && (
-              <Text style={texts.warning}>아이디가 옳지 않습니다.</Text>
-            )}
-          </View>
-
-          <View style={CommonStyle.input}>
-            <Text style={texts.body}>비밀번호</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="******"
-              secureTextEntry
-              value={pw}
-              onChangeText={setPw}
-            />
-            {isError.pw && (
-              <Text style={texts.warning}>비밀번호가 옳지 않습니다.</Text>
-            )}
-          </View>
-
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity style={CommonStyle.button} onPress={handleLogin}>
-              <Text style={texts.buttonText}>들어가기</Text>
-            </TouchableOpacity>
-          </View>
-          <Text
-            style={texts.signUp}
-            onPress={() => navigation.navigate("SignUp")}
-          >
-            당당이가 처음이라면 ?
-          </Text>
-        </View>
-      </KeyboardAvoidingView>
-    </View>
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={CommonStyle.input}
+          placeholder="아이디"
+          value={id}
+          onChangeText={setId}
+        />
+        <TextInput
+          style={CommonStyle.input}
+          placeholder="비밀번호"
+          value={pw}
+          onChangeText={setPw}
+          secureTextEntry
+        />
+        <Pressable style={styles.button} onPress={handleLogin}>
+          <Text style={texts.login}>로그인</Text>
+        </Pressable>
+      </View>
+      <Pressable style={styles.signUpContainer} onPress={() => setMode(true)}>
+        <Text style={texts.signUp}>당당이가 처음이라면 ?</Text>
+      </Pressable>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.Main,
   },
-  logoContainer: {
-    flex: 0.3,
-    paddingTop: 55,
+
+  closeContainer: {
+    flex: 0.1,
     justifyContent: "center",
+    alignItems: "flex-end",
+    paddingRight: 20,
+  },
+
+  LogoContainer: {
+    flex: 0.1,
     alignItems: "center",
   },
-  loginContainer: {
-    flex: 0.7,
-    backgroundColor: colors.WhiteSmoke,
-    borderRadius: 80,
-    borderTopEndRadius: 0,
-    borderBottomLeftRadius: 0,
-    borderBottomRightRadius: 0,
-    borderBottomStartRadius: 0,
-  },
+
   logo: {
-    width: "100%",
     height: "100%",
   },
-  titleContainer: {
-    flex: 0.2,
-    justifyContent: "center",
+
+  textContainer: {
+    flex: 0.05,
+  },
+
+  inputContainer: {
+    flex: 0.25,
     alignItems: "center",
   },
-  mainContainer: {
-    flex: 0.8,
-    alignItems: "center",
-  },
-  input: {
-    marginTop: 5,
-    height: 40,
-    fontSize: fonts.body,
-  },
-  buttonContainer: {
+
+  button: {
     width: "80%",
+    padding: 15,
+    backgroundColor: colors.Main,
+    borderRadius: 8,
+  },
+
+  signUpContainer: {
+    marginTop: Platform.OS === "android" ? 20 : 0,
   },
 });
 
 const texts = StyleSheet.create({
-  title: {
-    fontSize: fonts.Headline,
-    fontWeight: "bold",
-  },
-  body: {
+  info: {
     fontSize: fonts.body,
+    textAlign: "center",
   },
-  warning: {
-    fontSize: fonts.body,
-    color: colors.Error,
-  },
-  buttonText: {
+
+  login: {
+    textAlign: "center",
     color: "#fff",
-    fontSize: fonts.body,
   },
+
   signUp: {
-    fontSize: Platform.OS === "ios" ? fonts.body : fonts.description,
+    textAlign: "center",
     color: colors.Main,
-    fontWeight: 500,
-    marginTop: 50,
+    fontFamily: "NanumGothic",
+    fontWeight: "bold",
   },
 });

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Text,
   View,
@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import { colors, CommonStyle, fonts } from "../common";
@@ -16,11 +16,11 @@ import TimeButton from "../components/TimeButton";
 import BloodHeader from "../components/BloodHeader";
 import { StackParamList } from "../types/stackType";
 import { Blood, userBloodData } from "../Atoms/bloodData";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState } from "recoil";
+import { times } from "../InitialData";
 
 export default function BloodInfo() {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
-  const [time, setTime] = useState<string[]>([]);
   const [blood, setBlood] = useRecoilState<Blood>(userBloodData);
   const [isClicked, setIsClicked] = useState({
     none: false,
@@ -77,11 +77,9 @@ export default function BloodInfo() {
         <View style={styles.timeBox}>
           <Text style={texts.time}>측정 시간</Text>
           <View>
-            <TimeButton title={"🌚 식전 혈당(공복)"} />
-            <TimeButton title={"🔆 아침 식후 2시간 혈당"} />
-            <TimeButton title={"⛅ 점심 식후 2시간 혈당"} />
-            <TimeButton title={"🌙 저녁 식후 2시간 혈당"} />
-            <TimeButton title={"🛏 취침 전 혈당"} />
+            {times.map((item, idx) => (
+              <TimeButton title={item} key={idx} />
+            ))}
           </View>
         </View>
 
@@ -160,6 +158,7 @@ export default function BloodInfo() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingTop: 30,
   },
   BloodTypeBox: {
     flex: 0.8,
@@ -173,11 +172,11 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   timeBox: {
-    flex: 0.55,
+    flex: 0.65,
     width: "90%",
   },
   healBox: {
-    flex: 0.45,
+    flex: 0.35,
     width: "90%",
   },
   button: {
@@ -242,13 +241,13 @@ const texts = StyleSheet.create({
   },
   time: {
     fontSize: fonts.Subline,
-    color: colors.DimGrey,
+    color: colors.Grey,
     fontWeight: "bold",
     marginBottom: 15,
   },
   heal: {
     fontSize: fonts.Subline,
-    color: colors.DimGrey,
+    color: colors.Grey,
     fontWeight: "bold",
     marginTop: 15,
     marginBottom: 15,

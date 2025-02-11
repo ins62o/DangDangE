@@ -91,19 +91,20 @@ const styles = StyleSheet.create({
 
 const texts = StyleSheet.create({
   title: {
-    fontSize: fonts.Headline,
+    fontSize: fonts.Subline,
     color: colors.Nobel,
     fontWeight: "bold",
   },
 
   info: {
-    fontSize: fonts.body,
+    fontSize: fonts.description,
+    lineHeight: 15,
     color: colors.Nobel,
     fontWeight: "bold",
   },
 
   black: {
-    fontSize: fonts.Headline,
+    fontSize: fonts.Subline,
     color: "black",
     fontWeight: "bold",
   },

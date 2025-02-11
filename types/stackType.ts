@@ -1,6 +1,7 @@
+import { dateType } from "./dateType";
+
 export type StackParamList = {
   Splash: undefined;
-  Login: undefined;
   SignUp: undefined;
   Welcome: undefined;
   BloodType: undefined;
@@ -9,5 +10,9 @@ export type StackParamList = {
   KeyboardModal: undefined;
   Main: undefined;
   Home: undefined;
-  RecordBlood: { day: any };
+  RecordBlood?: { day?: dateType };
+  Tabs: undefined;
+  LoginSignUp: undefined;
+  WeekRecord: undefined;
+  MonthRecord: undefined;
 };

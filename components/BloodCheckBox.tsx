@@ -2,11 +2,11 @@ import React from "react";
 import { StyleSheet, Text, TextInput, View } from "react-native";
 import { colors, fonts } from "../common";
 
-export default function BloodCheckBox() {
+export default function BloodCheckBox({ data }) {
   return (
     <View style={styles.box}>
       <View style={styles.textContainer}>
-        <Text style={texts.title}>공복 혈당</Text>
+        <Text style={texts.title}>{data}</Text>
       </View>
       <View style={styles.bloodContainer}>
         <Text style={texts.blood}>78</Text>
@@ -18,7 +18,7 @@ export default function BloodCheckBox() {
 const styles = StyleSheet.create({
   box: {
     backgroundColor: "#fff",
-    width: "44%",
+
     height: 80,
     margin: 10,
     borderRadius: 8,

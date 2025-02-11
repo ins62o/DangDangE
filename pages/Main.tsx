@@ -1,32 +1,36 @@
-import React from "react";
-import { Text, View, SafeAreaView, StyleSheet, ScrollView } from "react-native";
-import { Calendar } from "react-native-calendars";
-import MainCalendar from "../components/MainCalendar";
-import { colors } from "../common";
+import React, { useEffect, useState } from "react";
+import Splash from "./Splash";
 import Tabs from "../components/Tabs";
+import { useUserData } from "../hooks/useUserData";
+import { userType } from "../types/userType";
+import Welcome from "./Welcome";
 
 export default function Main() {
+  const [isShowSplash, setIsShowSplash] = useState(true);
+  const [data, setData] = useState<userType | null>();
+
+  useEffect(() => {
+    const getData = async () => {
+      const userdata = await useUserData();
+      setData(userdata);
+
+      setTimeout(() => {
+        setIsShowSplash(false);
+      }, 2000);
+    };
+
+    getData();
+  }, []);
+
   return (
-    <View style={styles.container}>
-      <Tabs />
-    </View>
+    <>
+      {isShowSplash ? (
+        <Splash />
+      ) : data?.hasOwnProperty("type") !== null ? (
+        <Tabs />
+      ) : (
+        <Welcome />
+      )}
+    </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    borderWidth: 1,
-  },
-
-  contentContainer: {
-    borderWidth: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  scrollContainer: {
-    width: "90%",
-    backgroundColor: colors.WhiteSmoke,
-  },
-});

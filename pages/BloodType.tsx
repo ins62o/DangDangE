@@ -74,6 +74,7 @@ export default function BloodType() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingTop: 30,
   },
   contentContainer: {
     flex: 0.8,

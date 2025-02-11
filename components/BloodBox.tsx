@@ -1,15 +1,5 @@
-import {
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-  SafeAreaView,
-  TouchableOpacity,
-  Pressable,
-} from "react-native";
-import { colors, CommonStyle, fonts } from "../common";
-import { initialBlood } from "../InitialData";
-import { useEffect, useState } from "react";
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { colors, fonts } from "../common";
 
 type BloodProps = {
   title: string;
@@ -26,7 +16,6 @@ export default function BloodBox({
   setTitle,
   setType,
 }: BloodProps) {
-  const [bloodmin, bloodmax] = initialBlood[title];
   const handleButton = (type: string) => {
     setIsModal(true);
     setTitle(title);
@@ -81,8 +70,8 @@ const styles = StyleSheet.create({
   },
   minbutton: {
     backgroundColor: "#fff",
-    width: "80%",
-    height: 35,
+    width: "95%",
+    height: 40,
     padding: 10,
     borderRadius: 8,
     shadowColor: "rgba(0, 0, 0, 0.2)",

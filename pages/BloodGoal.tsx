@@ -26,7 +26,6 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-import { FIRESTORE_DB } from "../firebaseConfig";
 import { User, userData } from "../Atoms/userData";
 
 export default function BloodGoal() {
@@ -36,11 +35,12 @@ export default function BloodGoal() {
   const [user, setUser] = useRecoilState<User>(userData);
   const [title, setTitle] = useState("");
   const [type, setType] = useState("");
+  const [text, setText] = useState("완료");
   const db = getFirestore();
 
   const handleEnd = async () => {
     const q = query(collection(db, "users"), where("id", "==", user.id));
-
+    setText("사용자 정보를 만들고 있습니다..");
     try {
       const querySnapshot = await getDocs(q);
 
@@ -50,13 +50,11 @@ export default function BloodGoal() {
 
         await updateDoc(userDocRef, blood);
 
-        navigation.navigate("Main");
+        navigation.navigate("Tabs");
+        setBlood((prev) => ({ ...prev, time: [] }));
       } else {
-        console.log("No document found with this email.");
       }
-    } catch (error) {
-      console.error("Error updating document: ", error);
-    }
+    } catch (error) {}
   };
 
   return (
@@ -93,7 +91,7 @@ export default function BloodGoal() {
                     title={item}
                     key={idx}
                     setIsModal={setIsModal}
-                    blood={blood.goal[idx]}
+                    blood={blood.goal[item]}
                     setTitle={setTitle}
                     setType={setType}
                   />
@@ -106,7 +104,7 @@ export default function BloodGoal() {
               style={[CommonStyle.button, styles.custom]}
               onPress={handleEnd}
             >
-              <Text style={texts.button}>완료</Text>
+              <Text style={texts.button}>{text}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -121,6 +119,7 @@ export default function BloodGoal() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingTop: 30,
   },
   BloodContainer: {
     flex: 0.9,

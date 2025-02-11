@@ -1,4 +1,3 @@
-import React from "react";
 import {
   SafeAreaView,
   StyleSheet,
@@ -6,62 +5,111 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { colors, CommonStyle, fonts } from "../common";
-import { User, userData } from "../Atoms/userData";
-import { useRecoilState } from "recoil";
+import { colors, fonts, MyText } from "../common";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import Feather from "@expo/vector-icons/Feather";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { userData } from "../Atoms/userData";
+import Modal from "../components/Modal";
+import { useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { StackParamList } from "../types/stackType";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function More() {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
+  const user = useRecoilValue(userData);
+  const [isModal, setIsModal] = useState(false);
+  const [title, setTitle] = useState("");
+  const [info, setInfo] = useState("");
+  const [mode, setMode] = useState("");
+  const ischecked = user.nickname === "게스트";
 
-  const [data, setData] = useRecoilState<User | null>(userData);
-  const handleLogin = () => navigation.navigate("Login");
-  const handleLogout = async () => {
-    await AsyncStorage.clear();
-    setData(null);
-    navigation.navigate("Home");
+  const handleModal = (title: string, info: string, mode: string) => {
+    setIsModal(true);
+    setTitle(title);
+    setInfo(info);
+    setMode(mode);
+  };
+
+  const login = () => {
+    navigation.navigate("LoginSignUp");
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.loginContainer}>
-        <View style={styles.textContainer}>
-          <Text style={texts.login}>
-            {data ? data?.nickname : "로그인이 필요합니다."}
-          </Text>
-        </View>
-        <View style={styles.buttonContainer}>
+      <View style={styles.profileContainer}>
+        <MyText style={texts.nickname}>{user.nickname}</MyText>
+        <MyText style={texts.email}>{user.id}</MyText>
+      </View>
+      <View style={styles.menuContainer}>
+        <View style={styles.menu}>
           <TouchableOpacity
-            style={[CommonStyle.button, styles.custom]}
-            onPress={data ? handleLogout : handleLogin}
+            style={styles.button}
+            onPress={() =>
+              handleModal(
+                "혈당 목표치와 시간을 변경하시겠습니까?",
+                "기존에 설정한 내용은 사라집니다.",
+                "goal"
+              )
+            }
+            disabled={ischecked}
           >
-            <Text style={texts.button}>{data ? "로그아웃" : "로그인"}</Text>
+            <Feather
+              name="settings"
+              size={24}
+              color={ischecked ? colors.Nobel : "plum"}
+            />
+            <MyText style={ischecked ? texts.unmenu : texts.menu}>
+              목표치 설정
+            </MyText>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() =>
+              handleModal(
+                "서비스를 탈퇴하시겠습니까?",
+                "모든 정보가 삭제되고 복구할 수 없습니다.",
+                "delete"
+              )
+            }
+            disabled={ischecked}
+          >
+            <AntDesign
+              name="deleteuser"
+              size={24}
+              color={ischecked ? colors.Nobel : "red"}
+            />
+            <MyText style={ischecked ? texts.unmenu : texts.menu}>
+              회원 탈퇴
+            </MyText>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.button}
+            onPress={
+              ischecked
+                ? login
+                : () =>
+                    handleModal(
+                      "로그아웃하시겠습니까?",
+                      "로그아웃 시 재 로그인이 필요합니다.",
+                      "logout"
+                    )
+            }
+          >
+            <AntDesign name="logout" size={24} color="orange" />
+            <MyText style={texts.menu}>
+              {ischecked ? "로그인" : "로그아웃"}
+            </MyText>
           </TouchableOpacity>
         </View>
       </View>
-      <TouchableOpacity style={styles.menuContainer}>
-        <View style={styles.setting}>
-          <Text style={texts.menu}>🕐 목표값 · 시간 설정</Text>
-        </View>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.menuContainer}>
-        <View style={styles.setting}>
-          <Text style={texts.menu}>🖐 1 : 1 문의</Text>
-        </View>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.menuContainer}>
-        <View style={styles.setting}>
-          <Text style={texts.menu}>⛔ 초기화</Text>
-        </View>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.menuContainer}>
-        <View style={styles.setting}>
-          <Text style={texts.menu}>🚫 회원 탈퇴</Text>
-        </View>
-      </TouchableOpacity>
+      {isModal && (
+        <Modal setIsModal={setIsModal} title={title} info={info} mode={mode} />
+      )}
     </SafeAreaView>
   );
 }
@@ -69,56 +117,56 @@ export default function More() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#fff",
+    paddingTop: 30,
   },
 
-  loginContainer: {
-    flex: 0.1,
-    borderBottomWidth: 1,
-    borderColor: colors.Sub2,
-    flexDirection: "row",
-  },
-
-  textContainer: {
-    flex: 0.7,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  buttonContainer: {
+  profileContainer: {
     flex: 0.2,
     justifyContent: "center",
-  },
-
-  custom: {
-    backgroundColor: colors.Main,
+    alignItems: "center",
   },
 
   menuContainer: {
-    flex: 0.25,
-    borderBottomWidth: 1,
-    borderColor: colors.Sub2,
+    flex: 0.2,
+    padding: 20,
   },
 
-  setting: {
+  menu: {
+    borderWidth: 1,
+    borderRadius: 8,
+    borderColor: colors.WhiteSmoke,
     flexDirection: "row",
+    height: 100,
+  },
+
+  button: {
+    flex: 0.34,
     justifyContent: "center",
     alignItems: "center",
-    width: "100%",
-    height: "100%",
+    backgroundColor: colors.WhiteSmoke,
   },
 });
 
 const texts = StyleSheet.create({
-  login: {
-    fontSize: fonts.Subline,
+  nickname: {
+    fontSize: fonts.Headline,
+    fontWeight: "bold",
   },
 
-  button: {
-    color: "#fff",
+  email: {
+    fontSize: fonts.body,
+    fontWeight: "bold",
+    marginTop: 7,
+    color: colors.Main,
   },
 
   menu: {
-    fontSize: fonts.Subline,
-    marginLeft: 5,
+    marginTop: 7,
+  },
+
+  unmenu: {
+    marginTop: 7,
+    color: colors.Nobel,
   },
 });

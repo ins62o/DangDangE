@@ -5,6 +5,10 @@ import { colors } from "../common";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "../types/stackType";
+import { dateType } from "../types/dateType";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { FIRESTORE_DB } from "../firebaseConfig";
+import { collection, getDocs, query, where } from "firebase/firestore";
 
 export default function MainCalendar() {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
@@ -13,6 +17,7 @@ export default function MainCalendar() {
   const year = today.getFullYear();
   const month = today.getMonth() + 1;
   const day = today.getDate();
+  const [data, setData] = useState();
 
   useEffect(() => {
     setDate(
@@ -21,13 +26,50 @@ export default function MainCalendar() {
         "0"
       )}`
     );
+
+    const getData = async () => {
+      const id = await AsyncStorage.getItem("id");
+      const userRef = collection(FIRESTORE_DB, "blood");
+      const userQuery = query(userRef, where("id", "==", id));
+      const querySnapshot = await getDocs(userQuery);
+
+      const userDataArray = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      const userData = userDataArray[0];
+      const today = new Date().toISOString().slice(0, 10);
+
+      const keys = Object.keys(userData).filter((ele) => ele !== "id");
+
+      const obj = {};
+      keys.forEach((item) => {
+        obj[item] = { marked: true, dotColor: colors.Main };
+
+        // 저장된 날짜와 현재 날짜가 같다면 selected 속성 추가
+        if (item === today) {
+          obj[item] = {
+            ...obj[item], // 기존 속성 유지
+            selected: true,
+            selectedColor: colors.Main,
+            dotColor: colors.Sub2,
+          };
+        }
+      });
+      setData(obj);
+    };
+
+    getData();
   }, []);
 
   return (
     <Calendar
       monthFormat={"yyyy년 M월"}
       current={`${year}-${month}`}
-      onDayPress={(day: any) => navigation.navigate("RecordBlood", { day })}
+      onDayPress={(day: dateType) =>
+        navigation.navigate("RecordBlood", { day })
+      }
       style={styles.calendar}
       theme={{
         selectedDayBackgroundColor: colors.Main,
@@ -59,9 +101,7 @@ export default function MainCalendar() {
       }}
       markedDates={{
         [date]: { selected: true, selectedColor: colors.Main },
-        // "2025-01-20": { marked: true },
-        // "2025-01-15": { marked: true, dotColor: "red", activeOpacity: 0 },
-        // "2025-01-12": { disabled: true, disableTouchEvent: true },
+        ...data,
       }}
     />
   );

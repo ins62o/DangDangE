@@ -1,19 +1,32 @@
 import { useEffect, useRef } from "react";
-import {
-  StyleSheet,
-  Animated,
-  SafeAreaView,
-  useWindowDimensions,
-} from "react-native";
+import { StyleSheet, Animated, useWindowDimensions, View } from "react-native";
 import Logo from "../assets/image/Logo.png";
-import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { StackParamList } from "../types/stackType";
+import { useSetRecoilState } from "recoil";
+import { User, userData } from "../Atoms/userData";
+import { useUserData } from "../hooks/useUserData";
+import { StatusBar } from "expo-status-bar";
+import SystemNavigationBar from "react-native-system-navigation-bar";
 
 export default function Splash() {
   const windowWidth = useWindowDimensions().width;
   const opacity = useRef(new Animated.Value(0)).current;
-  const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
+  const setData = useSetRecoilState<User>(userData);
+
+  useEffect(() => {
+    const getUser = async () => {
+      const user = await useUserData();
+
+      if (user) {
+        const formattedUser = {
+          id: user.id,
+          nickname: user.nickname,
+        };
+        setData(formattedUser);
+      }
+    };
+
+    getUser();
+  }, []);
 
   useEffect(() => {
     const animation = Animated.timing(opacity, {
@@ -29,20 +42,15 @@ export default function Splash() {
     };
   }, []);
 
-  useEffect(() => {
-    setTimeout(() => {
-      navigation.navigate("Main");
-    }, 2500);
-  }, []);
-
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <Animated.Image
         source={Logo}
         style={[{ width: windowWidth * 0.9, opacity }]}
         resizeMode="contain"
       />
-    </SafeAreaView>
+      <StatusBar hidden={true} />
+    </View>
   );
 }
 

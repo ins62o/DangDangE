@@ -1,80 +1,155 @@
-import React, { useEffect, useState } from "react";
 import {
   Text,
   View,
   SafeAreaView,
   StyleSheet,
-  Pressable,
   TouchableOpacity,
+  Platform,
+  PixelRatio,
+  Pressable,
+  Dimensions,
+  useWindowDimensions,
 } from "react-native";
 import MainCalendar from "../components/MainCalendar";
-import { colors, fonts } from "../common";
+import { colors, fonts, MyText } from "../common";
 import { StatusBar } from "expo-status-bar";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { FIREBASE_AUTH } from "../firebaseConfig";
+import { useRecoilValue } from "recoil";
+import { userData } from "../Atoms/userData";
+import { motivationalMessages } from "../InitialData";
+import { CommonActions, useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { StackParamList } from "../types/stackType";
+import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {
-  collection,
-  DocumentData,
-  getDocs,
-  getFirestore,
-  query,
-  where,
-} from "firebase/firestore";
-import { useUserData } from "../hooks/useUserData";
-import { useRecoilState } from "recoil";
-import { User, userData } from "../Atoms/userData";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { FIRESTORE_DB } from "../firebaseConfig";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import InfoModal from "../components/InfoModal";
+import { RFValue } from "react-native-responsive-fontsize";
 
 export default function Home() {
-  const [data, setData] = useRecoilState<User>(userData);
+  const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
+  const user = useRecoilValue(userData);
+  const random = Math.trunc(Math.random() * 20);
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth() + 1;
+  const days = today.getDate();
+  const [bloodtext, setBloodtext] = useState("0%");
+  const [N, setN] = useState();
+  const [isModal, setIsModal] = useState(false);
+  const todaydate = `${year}-${String(month).padStart(2, "0")}-${String(
+    days
+  ).padStart(2, "0")}`;
+  const scaledFontSize = (size: number) => {
+    return size * PixelRatio.getFontScale();
+  };
+
+  const day = {
+    dateString: todaydate,
+  };
 
   useEffect(() => {
-    const getUser = async () => {
-      const user = await useUserData();
+    const getData = async () => {
+      const id = await AsyncStorage.getItem("id");
+      const userRef = collection(FIRESTORE_DB, "blood");
+      const userQuery = query(userRef, where("id", "==", id));
+      const querySnapshot = await getDocs(userQuery);
 
-      if (user) {
-        const formattedUser = {
-          id: user.id,
-          nickname: user.nickname,
-        };
-        setData(formattedUser);
+      const userDataArray = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      const userData = userDataArray[0];
+      const bloodData = userData[todaydate].blood;
+
+      const blood = Object.values(bloodData);
+
+      if (blood.length > 0) {
+        const bloodAvg = (
+          (blood.reduce((acc, cur) => acc + Number(cur), 0) / blood.length +
+            46.7) /
+          28.7
+        ).toFixed(1);
+
+        setBloodtext(bloodAvg + "%");
       }
+      const keys = Object.keys(userData).filter((key) => key !== "id");
+
+      // 날짜 오름차순 정렬
+      const sortedDates = keys.sort((a, b) => new Date(a) - new Date(b));
+
+      let count = 1; // 연속된 날짜 개수
+      let maxCount = 1; // 최대로 연속된 날짜 저장
+
+      for (let i = 1; i < sortedDates.length; i++) {
+        const prevDate = new Date(sortedDates[i - 1]);
+        const currentDate = new Date(sortedDates[i]);
+
+        // 이전 날짜 + 1일이 현재 날짜와 같다면 연속된 날짜
+        if (currentDate - prevDate === 86400000) {
+          count++;
+          maxCount = Math.max(maxCount, count);
+        } else {
+          count = 1; // 연속되지 않으면 초기화
+        }
+      }
+
+      setN(maxCount);
     };
 
-    getUser();
+    getData();
   }, []);
+
+  const windowHeight = useWindowDimensions().height;
 
   return (
     <SafeAreaView style={styles.container}>
       <MainCalendar />
       <View style={styles.contentContainer}>
-        <View style={styles.ProfileContainer}>
-          <View style={styles.Profile}>
-            <Text style={texts.name}>{data ? data?.nickname : "게스트님"}</Text>
-            <Text style={texts.welcome}>환영합니다</Text>
+        <View style={[styles.content, { height: (windowHeight / 2) * 0.5 }]}>
+          <View style={styles.profileContainer}>
+            <MyText style={texts.nickname}>
+              {user ? user?.nickname : "게스트"}님 환영합니다.
+            </MyText>
+            <MyText style={texts.badge}>{N}일째 관리 중</MyText>
+          </View>
+
+          <View style={styles.paperContainer}>
             <View style={styles.card}>
               <View style={styles.corner} />
-              <Text>작은 변화가 큰 건강을 만듭니다. 한 걸음씩 나아가요!</Text>
+              <MyText style={texts.motive}>
+                {motivationalMessages[random]}
+              </MyText>
             </View>
-            <Text style={texts.check}> 1일째 관리 중</Text>
           </View>
-          <View style={styles.bloodCheckContainer}>
-            <TouchableOpacity style={styles.blood}>
-              <Text>☀️</Text>
-              <Text style={texts.button}>일일 통계</Text>
-            </TouchableOpacity>
 
-            <TouchableOpacity style={styles.blood}>
-              <Text>📅</Text>
-              <Text style={texts.button}>주간 통계</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.blood}>
-              <Text>🗓</Text>
-              <Text style={texts.button}>월별 통계</Text>
-            </TouchableOpacity>
+          <View style={styles.buttonContainer}>
+            <View style={styles.bloodButtonContainer}>
+              <TouchableOpacity
+                onPress={() => navigation.navigate("RecordBlood", { day })}
+              >
+                <MyText style={texts.record}>혈당 기록하기</MyText>
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.bloodTextContainer}>
+              <MyText style={texts.bloodText}>
+                오늘 평균 당화혈색소 : {bloodtext}
+              </MyText>
+              <AntDesign
+                name="questioncircleo"
+                size={15}
+                color="black"
+                style={styles.question}
+                onPress={() => setIsModal(true)}
+              />
+            </View>
           </View>
         </View>
       </View>
+      {isModal && <InfoModal setIsModal={setIsModal} />}
       <StatusBar style="dark" />
     </SafeAreaView>
   );
@@ -83,50 +158,38 @@ export default function Home() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 50,
+    backgroundColor: "#fff",
+    paddingTop: 30,
   },
 
   contentContainer: {
     flex: 1,
     alignItems: "center",
     backgroundColor: colors.WhiteSmoke,
-    paddingTop: 30,
+    paddingTop: 40,
   },
 
-  scrollContainer: {
-    width: "100%",
-    backgroundColor: colors.WhiteSmoke,
-  },
-
-  ProfileContainer: {
+  content: {
     width: "90%",
-    height: "70%",
     borderRadius: 8,
     backgroundColor: "#fff",
   },
 
-  bloodCheckContainer: {
+  profileContainer: {
     flex: 0.3,
-    flexDirection: "row",
-  },
-
-  Profile: {
-    flex: 0.7,
-    borderTopLeftRadius: 8,
-    borderTopRightRadius: 8,
-    padding: 20,
-  },
-
-  blood: {
-    width: "33.33%",
+    padding: 10,
     justifyContent: "center",
-    alignItems: "center",
+  },
+
+  paperContainer: {
+    flex: 0.4,
+    padding: 10,
   },
 
   card: {
     backgroundColor: colors.Sub2,
-    padding: 20,
     borderRadius: 8,
+    justifyContent: "center",
   },
 
   corner: {
@@ -141,29 +204,58 @@ const styles = StyleSheet.create({
     borderLeftColor: colors.Main,
     borderTopColor: "#fff",
   },
+
+  buttonContainer: {
+    flex: 0.3,
+    flexDirection: "row",
+  },
+
+  bloodbutton: {
+    flex: 0.3,
+  },
+
+  bloodTextContainer: {
+    flex: 0.6,
+    justifyContent: "center",
+  },
+
+  bloodButtonContainer: {
+    flex: 0.4,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  question: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    paddingRight: 5,
+  },
 });
 
 const texts = StyleSheet.create({
-  name: {
-    fontSize: fonts.Headline,
-    fontWeight: "bold",
-    color: colors.DimGrey,
-  },
-  welcome: {
-    marginTop: 10,
-    marginBottom: 20,
-    fontSize: fonts.Headline,
-    fontWeight: "bold",
-    color: colors.DimGrey,
-  },
-
-  check: {
+  badge: {
     position: "absolute",
     right: 0,
-    padding: 20,
+    padding: 10,
+    fontSize: fonts.description,
   },
 
-  button: {
-    marginTop: 5,
+  nickname: {
+    fontSize: fonts.Subline,
+    paddingLeft: 10,
+  },
+
+  bloodText: {
+    fontSize: fonts.description,
+  },
+
+  record: {
+    fontWeight: "bold",
+  },
+
+  motive: {
+    fontSize: fonts.body,
+    padding: 10,
   },
 });
