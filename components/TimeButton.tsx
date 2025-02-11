@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useState } from "react";
-import { Pressable, StyleSheet, Text } from "react-native";
-import { colors } from "../common";
+import { Platform, Pressable, StyleSheet, Text } from "react-native";
+import { colors, fonts, MyText } from "../common";
 import { useRecoilState } from "recoil";
 import { Blood, userBloodData } from "../Atoms/bloodData";
 import { times } from "../InitialData";
@@ -32,7 +32,7 @@ export default function TimeButton({ title }: TimeButtonProps) {
 
   return (
     <Pressable style={[styles.button, dynamicStyle]} onPress={handleClick}>
-      <Text style={dynamicText}>{title}</Text>
+      <MyText style={dynamicText}>{title}</MyText>
     </Pressable>
   );
 }
@@ -40,7 +40,6 @@ export default function TimeButton({ title }: TimeButtonProps) {
 const styles = StyleSheet.create({
   button: {
     width: 200,
-    height: 40,
     shadowColor: "rgba(0, 0, 0, 0.2)",
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.2,
@@ -61,9 +60,10 @@ const styles = StyleSheet.create({
 
 const texts = StyleSheet.create({
   accessText: {
-    color: "black",
+    fontSize: fonts.body,
   },
   disableText: {
+    fontSize: fonts.body,
     color: colors.Nobel,
   },
 });

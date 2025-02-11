@@ -9,7 +9,7 @@ import {
   KeyboardAvoidingView,
 } from "react-native";
 import BloodHeader from "../components/BloodHeader";
-import { colors, CommonStyle, fonts } from "../common";
+import { colors, CommonStyle, fonts, MyText } from "../common";
 import BloodBox from "../components/BloodBox";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -63,18 +63,19 @@ export default function BloodGoal() {
         <BloodHeader three={true} />
         <View style={styles.BloodContainer}>
           <View style={styles.textContainer}>
-            <Text style={texts.title}>혈당 목표치를 설정해주세요</Text>
-            <Text style={texts.Info}>
-              <Text style={texts.point}>당뇨인들의 목표수치</Text> 를
+            <MyText style={texts.title}>혈당 목표치를 설정해주세요</MyText>
+            <MyText style={texts.Info}>
+              <MyText style={texts.point}>당뇨인들의 목표수치</MyText> 를
               알려드릴게요
               {"\n"}
-              <Text style={texts.point}>원하는 목표 수치</Text>가 있으시면 직접
-              설정도 가능해요{"\n"}
-              <Text>
-                입력하지 않을 경우 <Text style={texts.point}>기본 설정</Text>
+              <MyText style={texts.point}>원하는 목표 수치</MyText>가 있으시면
+              직접 설정도 가능해요{"\n"}
+              <MyText>
+                입력하지 않을 경우{" "}
+                <MyText style={texts.point}>기본 설정</MyText>
                 으로 세팅됩니다.
-              </Text>
-            </Text>
+              </MyText>
+            </MyText>
           </View>
 
           <View style={styles.contentContainer}>
@@ -104,7 +105,7 @@ export default function BloodGoal() {
               style={[CommonStyle.button, styles.custom]}
               onPress={handleEnd}
             >
-              <Text style={texts.button}>{text}</Text>
+              <MyText style={texts.button}>{text}</MyText>
             </TouchableOpacity>
           </View>
         </View>
@@ -154,15 +155,19 @@ const texts = StyleSheet.create({
     color: colors.Sub1,
     fontWeight: "bold",
   },
+
   title: {
     fontSize: fonts.Headline,
     fontWeight: "bold",
-    marginBottom: 10,
+    marginBottom: 5,
   },
+
   Info: {
+    fontSize: fonts.body,
     textAlign: "center",
     lineHeight: 20,
   },
+
   button: {
     color: "#fff",
     fontWeight: "bold",

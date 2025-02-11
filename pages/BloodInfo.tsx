@@ -11,7 +11,7 @@ import {
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-import { colors, CommonStyle, fonts } from "../common";
+import { colors, CommonStyle, fonts, MyText } from "../common";
 import TimeButton from "../components/TimeButton";
 import BloodHeader from "../components/BloodHeader";
 import { StackParamList } from "../types/stackType";
@@ -69,10 +69,13 @@ export default function BloodInfo() {
       <BloodHeader two={true} />
       <View style={styles.BloodTypeBox}>
         <View style={styles.textContainer}>
-          <Text style={texts.title}>혈당을 측정하는 시간이 언제인가요 ?</Text>
-          <Text>
-            <Text style={texts.point}>측정시간과 치료방법</Text>을 선택해주세요
-          </Text>
+          <MyText style={texts.title}>
+            혈당을 측정하는 시간이 언제인가요 ?
+          </MyText>
+          <MyText>
+            <MyText style={texts.point}>측정시간과 치료방법</MyText>을
+            선택해주세요
+          </MyText>
         </View>
         <View style={styles.timeBox}>
           <Text style={texts.time}>측정 시간</Text>
@@ -148,7 +151,7 @@ export default function BloodInfo() {
           onPress={() => navigation.navigate("BloodGoal")}
           disabled={blood.time?.length === 0 || !isAnyClicked}
         >
-          <Text style={texts.button}>다음</Text>
+          <MyText style={texts.button}>다음</MyText>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -171,10 +174,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginBottom: 10,
   },
+
   timeBox: {
     flex: 0.65,
     width: "90%",
   },
+
   healBox: {
     flex: 0.35,
     width: "90%",
@@ -201,53 +206,58 @@ const styles = StyleSheet.create({
   },
   custom: {
     width: "90%",
-    height: 50,
     backgroundColor: colors.Sub1,
   },
+
   buttonContainer: {
     flex: 0.1,
     justifyContent: "center",
     alignItems: "center",
   },
+
   access: {
     backgroundColor: colors.Sub2,
   },
+
   disable: {
     backgroundColor: "#fff",
   },
+
   accessText: {
     color: colors.Nobel,
   },
+
   disableText: {
     color: "black",
   },
 
   uncustom: {
     width: "90%",
-    height: 50,
     backgroundColor: colors.Nobel,
   },
 });
 
 const texts = StyleSheet.create({
   point: {
+    fontFamily: "Pretendard-Bold",
     color: colors.Sub1,
     fontWeight: "bold",
   },
+
   title: {
     fontSize: fonts.Headline,
     fontWeight: "bold",
-    marginBottom: 10,
+    marginBottom: 5,
   },
+
   time: {
     fontSize: fonts.Subline,
-    color: colors.Grey,
     fontWeight: "bold",
     marginBottom: 15,
   },
+
   heal: {
     fontSize: fonts.Subline,
-    color: colors.Grey,
     fontWeight: "bold",
     marginTop: 15,
     marginBottom: 15,

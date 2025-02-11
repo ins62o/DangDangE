@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
-import { colors, fonts } from "../common";
+import { colors, fonts, MyText } from "../common";
 
 type BloodProps = {
   title: string;
@@ -29,21 +29,21 @@ export default function BloodBox({
       </View>
       <View style={styles.inputContainer}>
         <View style={styles.minContainer}>
-          <Text style={texts.sub}>최저</Text>
+          <MyText style={texts.sub}>최저</MyText>
           <TouchableOpacity
             style={styles.minbutton}
             onPress={() => handleButton("min")}
           >
-            <Text>{`${blood[0]}mg/dL`}</Text>
+            <MyText style={texts.bloodText}>{`${blood[0]}mg/dL`}</MyText>
           </TouchableOpacity>
         </View>
         <View style={styles.maxContainer}>
-          <Text style={texts.sub}>최고</Text>
+          <MyText style={texts.sub}>최고</MyText>
           <TouchableOpacity
             style={styles.minbutton}
             onPress={() => handleButton("max")}
           >
-            <Text>{`${blood[1]}mg/dL`}</Text>
+            <MyText style={texts.bloodText}>{`${blood[1]}mg/dL`}</MyText>
           </TouchableOpacity>
         </View>
       </View>
@@ -70,8 +70,7 @@ const styles = StyleSheet.create({
   },
   minbutton: {
     backgroundColor: "#fff",
-    width: "95%",
-    height: 40,
+    width: "90%",
     padding: 10,
     borderRadius: 8,
     shadowColor: "rgba(0, 0, 0, 0.2)",
@@ -85,11 +84,15 @@ const styles = StyleSheet.create({
 const texts = StyleSheet.create({
   title: {
     fontSize: fonts.Subline,
-    color: colors.DimGrey,
     fontWeight: "bold",
     marginBottom: 15,
   },
   sub: {
+    fontSize: fonts.body,
     marginBottom: 10,
+  },
+
+  bloodText: {
+    fontSize: fonts.body,
   },
 });
