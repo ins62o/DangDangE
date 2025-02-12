@@ -10,7 +10,7 @@ import Main from "./pages/Main";
 import RecordBlood from "./pages/RecordBlood";
 import Home from "./pages/Home";
 import { StackParamList } from "./types/stackType";
-import Tabs from "./components/Tabs";
+import Tabs from "./components/Element/Tabs";
 import LoginSignUp from "./pages/LoginSignUp";
 import WeekRecord from "./pages/WeekRecord";
 import MonthRecord from "./pages/MonthRecord";

@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, Text, TextInput, View } from "react-native";
-import { colors, fonts } from "../common";
+import { colors, fonts } from "../../common";
 
 export default function BloodCheckBox({ data }) {
   return (

@@ -1,5 +1,5 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { fonts, MyText } from "../common";
+import { fonts, MyText } from "../../common";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 type MemoProps = {

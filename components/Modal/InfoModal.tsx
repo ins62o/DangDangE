@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { colors, fonts, MyText } from "../common";
+import { colors, fonts, MyText } from "../../common";
 import AntDesign from "@expo/vector-icons/AntDesign";
 type Modal = {
   setIsModal: React.Dispatch<React.SetStateAction<boolean>>;

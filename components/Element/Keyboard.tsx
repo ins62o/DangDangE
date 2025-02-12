@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { fonts } from "../common";
+import { fonts } from "../../common";
 
 type KeyboardProps = {
   buttonText: string | JSX.Element;

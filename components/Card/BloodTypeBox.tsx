@@ -8,7 +8,7 @@ import {
   Pressable,
   Platform,
 } from "react-native";
-import { colors, fonts, MyText } from "../common";
+import { colors, fonts, MyText } from "../../common";
 
 type BloodType = {
   id: string;

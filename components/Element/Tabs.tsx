@@ -1,12 +1,10 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import React, { useEffect, useState } from "react";
-import Login from "../pages/Login";
-import { colors, fonts } from "../common";
+import Login from "../../pages/Login";
+import { colors } from "../../common";
 import Entypo from "@expo/vector-icons/Entypo";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import Home from "../pages/Home";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import More from "../pages/More";
+import Home from "../../pages/Home";
+import More from "../../pages/More";
 import { Platform, Pressable, TouchableOpacity } from "react-native";
 
 const Tab = createBottomTabNavigator();

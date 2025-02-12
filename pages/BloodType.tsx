@@ -15,8 +15,8 @@ import { colors, CommonStyle, fonts, MyText } from "../common";
 import { BloodData } from "../InitialData";
 import { Blood, userBloodData } from "../Atoms/bloodData";
 import { StackParamList } from "../types/stackType";
-import BloodTypeBox from "../components/BloodTypeBox";
-import BloodHeader from "../components/BloodHeader";
+import BloodTypeBox from "../components/Card/BloodTypeBox";
+import BloodHeader from "../components/Element/BloodHeader";
 
 export default function BloodType() {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();

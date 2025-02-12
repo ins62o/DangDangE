@@ -7,7 +7,7 @@ import SignUp from "./SignUp";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "../types/stackType";
-import OneClickModal from "../components/OneClickModal";
+import OneClickModal from "../components/Modal/OneClickModal";
 
 export default function LoginSignUp() {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();

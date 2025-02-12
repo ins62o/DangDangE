@@ -12,8 +12,8 @@ import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import { colors, CommonStyle, fonts, MyText } from "../common";
-import TimeButton from "../components/TimeButton";
-import BloodHeader from "../components/BloodHeader";
+import TimeButton from "../components/Element/TimeButton";
+import BloodHeader from "../components/Element/BloodHeader";
 import { StackParamList } from "../types/stackType";
 import { Blood, userBloodData } from "../Atoms/bloodData";
 import { useRecoilState } from "recoil";

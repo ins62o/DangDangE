@@ -1,5 +1,5 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { colors, fonts } from "../common";
+import { colors, fonts } from "../../common";
 import Feather from "@expo/vector-icons/Feather";
 
 type Modal = {

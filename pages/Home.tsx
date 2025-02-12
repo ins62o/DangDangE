@@ -6,17 +6,15 @@ import {
   TouchableOpacity,
   Platform,
   PixelRatio,
-  Pressable,
-  Dimensions,
   useWindowDimensions,
 } from "react-native";
-import MainCalendar from "../components/MainCalendar";
+import MainCalendar from "../components/Element/MainCalendar";
 import { colors, fonts, MyText } from "../common";
 import { StatusBar } from "expo-status-bar";
 import { useRecoilValue } from "recoil";
 import { userData } from "../Atoms/userData";
 import { motivationalMessages } from "../InitialData";
-import { CommonActions, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "../types/stackType";
 import { useEffect, useState } from "react";
@@ -24,8 +22,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { FIRESTORE_DB } from "../firebaseConfig";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import InfoModal from "../components/InfoModal";
-import { RFValue } from "react-native-responsive-fontsize";
+import InfoModal from "../components/Modal/InfoModal";
 
 export default function Home() {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();

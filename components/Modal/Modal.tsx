@@ -1,11 +1,11 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { colors, fonts } from "../common";
+import { colors, fonts } from "../../common";
 import Feather from "@expo/vector-icons/Feather";
-import { StackParamList } from "../types/stackType";
+import { StackParamList } from "../../types/stackType";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 import { useRecoilState, useResetRecoilState, useSetRecoilState } from "recoil";
-import { userData } from "../Atoms/userData";
+import { userData } from "../../Atoms/userData";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   EmailAuthProvider,
@@ -19,7 +19,7 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { FIREBASE_AUTH, FIRESTORE_DB } from "../firebaseConfig";
+import { FIREBASE_AUTH, FIRESTORE_DB } from "../../firebaseConfig";
 import { useState } from "react";
 
 type ModalProps = {
@@ -181,7 +181,6 @@ const texts = StyleSheet.create({
 
   info: {
     fontSize: fonts.body,
-    color: colors.Grey,
   },
 
   ok: {

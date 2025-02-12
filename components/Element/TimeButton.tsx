@@ -1,9 +1,9 @@
 import { Dispatch, SetStateAction, useState } from "react";
 import { Platform, Pressable, StyleSheet, Text } from "react-native";
-import { colors, fonts, MyText } from "../common";
+import { colors, fonts, MyText } from "../../common";
 import { useRecoilState } from "recoil";
-import { Blood, userBloodData } from "../Atoms/bloodData";
-import { times } from "../InitialData";
+import { Blood, userBloodData } from "../../Atoms/bloodData";
+import { times } from "../../InitialData";
 
 type TimeButtonProps = {
   title: string;

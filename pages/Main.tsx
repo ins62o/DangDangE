@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Splash from "./Splash";
-import Tabs from "../components/Tabs";
+import Tabs from "../components/Element/Tabs";
 import { useUserData } from "../hooks/useUserData";
 import { userType } from "../types/userType";
 import Welcome from "./Welcome";

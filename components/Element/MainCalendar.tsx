@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Calendar, LocaleConfig } from "react-native-calendars";
-import { colors } from "../common";
+import { colors } from "../../common";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { StackParamList } from "../types/stackType";
-import { dateType } from "../types/dateType";
+import { StackParamList } from "../../types/stackType";
+import { dateType } from "../../types/dateType";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { FIRESTORE_DB } from "../firebaseConfig";
+import { FIRESTORE_DB } from "../../firebaseConfig";
 import { collection, getDocs, query, where } from "firebase/firestore";
 
 export default function MainCalendar() {

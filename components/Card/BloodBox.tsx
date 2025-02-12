@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
-import { colors, fonts, MyText } from "../common";
+import { colors, fonts, MyText } from "../../common";
 
 type BloodProps = {
   title: string;

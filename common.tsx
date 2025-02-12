@@ -1,6 +1,4 @@
 import { StyleSheet, Platform, Text } from "react-native";
-import * as Font from "expo-font";
-import { useEffect, useState } from "react";
 
 export const colors = {
   Main: "#2C6975",

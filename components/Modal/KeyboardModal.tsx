@@ -7,14 +7,14 @@ import {
   Animated,
   Pressable,
 } from "react-native";
-import { colors, CommonStyle, fonts, MyText } from "../common";
-import Keyboard from "./Keyboard";
+import { colors, CommonStyle, fonts, MyText } from "../../common";
+import Keyboard from "../Element/Keyboard";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
-import { Blood, userBloodData } from "../Atoms/bloodData";
+import { Blood, userBloodData } from "../../Atoms/bloodData";
 import { useRecoilState } from "recoil";
-import { BloodData } from "../pages/RecordBlood";
-import { userType } from "../types/userType";
-import { getWeek } from "../utils/dateFn";
+import { BloodData } from "../../pages/RecordBlood";
+import { userType } from "../../types/userType";
+import { getWeek } from "../../utils/dateFn";
 
 type keyboardProps = {
   setIsModal: React.Dispatch<React.SetStateAction<boolean>>;

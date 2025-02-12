@@ -8,13 +8,13 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
 } from "react-native";
-import BloodHeader from "../components/BloodHeader";
+import BloodHeader from "../components/Element/BloodHeader";
 import { colors, CommonStyle, fonts, MyText } from "../common";
-import BloodBox from "../components/BloodBox";
+import BloodBox from "../components/Card/BloodBox";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "../types/stackType";
-import KeyboardModal from "../components/KeyboardModal";
+import KeyboardModal from "../components/Modal/KeyboardModal";
 import { useRecoilState } from "recoil";
 import { Blood, userBloodData } from "../Atoms/bloodData";
 import {

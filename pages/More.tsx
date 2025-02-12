@@ -11,7 +11,7 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import Feather from "@expo/vector-icons/Feather";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { userData } from "../Atoms/userData";
-import Modal from "../components/Modal";
+import Modal from "../components/Modal/Modal";
 import { useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";

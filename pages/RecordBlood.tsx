@@ -2,15 +2,15 @@ import React, { memo, useEffect, useMemo, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { colors, fonts, MyText } from "../common";
-import BloodCard from "../components/BloodCard";
-import TextCard from "../components/TextCard";
+import BloodCard from "../components/Card/BloodCard";
+import TextCard from "../components/Card/TextCard";
 import { RouteProp, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "../types/stackType";
 import { useUserData } from "../hooks/useUserData";
 import { userType } from "../types/userType";
-import KeyboardModal from "../components/KeyboardModal";
-import MemoModal from "../components/MemoModal";
+import KeyboardModal from "../components/Modal/KeyboardModal";
+import MemoModal from "../components/Modal/MemoModal";
 import {
   addDoc,
   collection,

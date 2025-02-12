@@ -1,8 +1,8 @@
 import { StyleSheet, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { StackParamList } from "../types/stackType";
-import { colors } from "../common";
+import { StackParamList } from "../../types/stackType";
+import { colors } from "../../common";
 import AntDesign from "@expo/vector-icons/AntDesign";
 
 type MenuType = {

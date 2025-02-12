@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   Text,
 } from "react-native";
-import { colors, CommonStyle } from "../common";
+import { colors, CommonStyle } from "../../common";
 
 type MemoProps = {
   setIsMemo: React.Dispatch<React.SetStateAction<boolean>>;
