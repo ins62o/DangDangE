@@ -4,23 +4,11 @@ import Feather from "@expo/vector-icons/Feather";
 import { StackParamList } from "../../types/stackType";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
-import { useRecoilState, useResetRecoilState, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import { userData } from "../../Atoms/userData";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {
-  EmailAuthProvider,
-  getAuth,
-  reauthenticateWithCredential,
-} from "firebase/auth";
-import {
-  collection,
-  deleteDoc,
-  getDocs,
-  query,
-  where,
-} from "firebase/firestore";
-import { FIREBASE_AUTH, FIRESTORE_DB } from "../../firebaseConfig";
 import { useState } from "react";
+import { deleteUser } from "../../utils/firebase/deleteUser";
 
 type ModalProps = {
   setIsModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -29,63 +17,43 @@ type ModalProps = {
   mode: string;
 };
 
-export default function Modal({ setIsModal, title, info, mode }: ModalProps) {
+export default function ChoiceModal({
+  setIsModal,
+  title,
+  info,
+  mode,
+}: ModalProps) {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
-  const [user, setUser] = useRecoilState(userData);
-  const auth = getAuth();
+  const setUser = useSetRecoilState(userData);
   const [text, setText] = useState(title);
 
-  const logout = async () => {
+  // 로그아웃 : 사용자 Atom 변경, 모달 종료, AsyncStorage 값 제거, 홈 화면 전환
+  const handleLogout = async () => {
     setUser({ id: "로그인이 필요합니다.", nickname: "게스트" });
     await AsyncStorage.clear();
     setIsModal(false);
     navigation.navigate("Home");
   };
 
-  const goal = () => {
-    navigation.navigate("BloodType");
-  };
+  // 목표치 설정 : 사용자 혈당 정보 입력 페이지로 전환
+  const goToGoalSetting = () => navigation.navigate("BloodType");
 
-  const deleteUser = async () => {
-    const auth = getAuth();
-    const id = await AsyncStorage.getItem("id");
-
-    // 🔹 Firestore: users 컬렉션에서 유저 삭제
-    const userRef = collection(FIRESTORE_DB, "users");
-    const userQuery = query(userRef, where("id", "==", id));
-    const userSnapshot = await getDocs(userQuery);
-    userSnapshot.forEach(async (docSnap) => {
-      await deleteDoc(docSnap.ref);
-    });
-    setText("사용자 정보를 삭제하고 있습니다.");
-
-    // 🔹 Firestore: blood 컬렉션에서도 유저 데이터 삭제
-    const bloodRef = collection(FIRESTORE_DB, "blood");
-    const bloodQuery = query(bloodRef, where("id", "==", id));
-    const bloodSnapshot = await getDocs(bloodQuery);
-    bloodSnapshot.forEach(async (docSnap) => {
-      await deleteDoc(docSnap.ref);
-    });
-
-    // 🔹 AsyncStorage 데이터 초기화
-    await AsyncStorage.clear();
-    setUser({ id: "로그인이 필요합니다.", nickname: "게스트" });
-    setText("로그인 정보를 삭제하고 있습니다.");
-
-    // 🔹 Firebase Auth 계정 삭제
-    const Fireuser = FIREBASE_AUTH.currentUser;
-    if (Fireuser) {
-      await Fireuser.delete();
+  // 회원 탈퇴 : 회원 탈퇴 후 홈 화면 전환
+  const deleteAccount = async () => {
+    try {
+      await deleteUser({ setText, setUser });
+      setIsModal(false);
+      navigation.navigate("Home");
+    } catch (err) {
+      console.error("회원 탈퇴 중 오류 발생", err);
     }
-    setText("모든 정보가 삭제되었습니다.");
-    setIsModal(false);
-    navigation.navigate("Home");
   };
 
-  const handleButton = () => {
-    if (mode === "logout") logout();
-    if (mode === "goal") goal();
-    if (mode === "delete") deleteUser();
+  // 모드별로 다르게 함수 실행
+  const handleModeAction = () => {
+    if (mode === "logout") handleLogout();
+    if (mode === "goal") goToGoalSetting();
+    if (mode === "delete") deleteAccount();
   };
 
   return (
@@ -109,7 +77,7 @@ export default function Modal({ setIsModal, title, info, mode }: ModalProps) {
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.button, styles.okbutton]}
-            onPress={handleButton}
+            onPress={handleModeAction}
           >
             <Text style={texts.ok}>확인</Text>
           </TouchableOpacity>

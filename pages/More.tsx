@@ -2,21 +2,20 @@ import {
   Platform,
   SafeAreaView,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from "react-native";
 import { colors, fonts, MyText } from "../common";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Feather from "@expo/vector-icons/Feather";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilValue } from "recoil";
 import { userData } from "../Atoms/userData";
-import Modal from "../components/Modal/Modal";
+import Modal from "../components/Modal/ChoiceModal";
 import { useState } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { StackParamList } from "../types/stackType";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import ChoiceModal from "../components/Modal/ChoiceModal";
 
 export default function More() {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
@@ -109,7 +108,12 @@ export default function More() {
         </View>
       </View>
       {isModal && (
-        <Modal setIsModal={setIsModal} title={title} info={info} mode={mode} />
+        <ChoiceModal
+          setIsModal={setIsModal}
+          title={title}
+          info={info}
+          mode={mode}
+        />
       )}
     </SafeAreaView>
   );
