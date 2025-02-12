@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Keyboard,
   Platform,
@@ -19,19 +19,18 @@ import { StackParamList } from "../types/stackType";
 import { useNavigation } from "@react-navigation/native";
 
 type LoginProps = {
-  setMode: React.Dispatch<React.SetStateAction<boolean>>;
-  setIsModal: React.Dispatch<React.SetStateAction<boolean>>;
-  setTitle: React.Dispatch<React.SetStateAction<string>>;
+  setMode: React.Dispatch<React.SetStateAction<boolean>>; // 로그인 or 회원가입
+  setIsModal: React.Dispatch<React.SetStateAction<boolean>>; // 모달 OPEN or CLOSE
+  setTitle: React.Dispatch<React.SetStateAction<string>>; // 모달 경고문
 };
 
 export default function Login({ setMode, setIsModal, setTitle }: LoginProps) {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
   const setData = useSetRecoilState<User>(userData);
-  const [loading, setLoading] = useState(false);
   const [id, setId] = useState("");
   const [pw, setPw] = useState("");
-  const [text, setText] = useState("로그인 시도중입니다..");
-  const auth = FIREBASE_AUTH;
+  const [loading, setLoading] = useState(false);
+  const [text, setText] = useState("로그인 시도중입니다.");
 
   const handleLogin = async () => {
     // 1. 키보드 내리고 아이디 패스워드 입력했는지 확인
@@ -53,9 +52,13 @@ export default function Login({ setMode, setIsModal, setTitle }: LoginProps) {
     // 2. 로그인 중 텍스트 출력
     setLoading(true);
 
+    // 3. 파이어베이스 로그인 시도
     try {
-      // 3. 파이어베이스 로그인 시도
-      const userCredential = await signInWithEmailAndPassword(auth, id, pw);
+      const userCredential = await signInWithEmailAndPassword(
+        FIREBASE_AUTH,
+        id,
+        pw
+      );
       const user = userCredential.user;
 
       // 4. 액세스 토큰 - AsyncStorage 저장
@@ -80,9 +83,8 @@ export default function Login({ setMode, setIsModal, setTitle }: LoginProps) {
           : navigation.navigate("Welcome");
       }
     } catch (err) {
-      setIsModal(true);
       setTitle("아이디 또는 비밀번호가 일치하지 않습니다.");
-      Keyboard.dismiss();
+      setIsModal(true);
       setLoading(false);
     }
   };

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Pressable,
   StyleSheet,
@@ -10,11 +10,12 @@ import {
 import { colors, CommonStyle, fonts, MyText } from "../common";
 import { isNicknameTaken } from "../utils/SignUp/isNicknameTaken";
 import { createUser } from "../utils/SignUp/createUser";
+import { isEmailTaken } from "../utils/SignUp/isEmailTaken";
 
 type SignProps = {
-  setMode: React.Dispatch<React.SetStateAction<boolean>>;
-  setIsModal: React.Dispatch<React.SetStateAction<boolean>>;
-  setTitle: React.Dispatch<React.SetStateAction<string>>;
+  setMode: React.Dispatch<React.SetStateAction<boolean>>; // 로그인 or 회원가입
+  setIsModal: React.Dispatch<React.SetStateAction<boolean>>; // 모달 OPEN or CLOSE
+  setTitle: React.Dispatch<React.SetStateAction<string>>; // 모달 경고문
 };
 
 export default function SignUp({ setMode, setIsModal, setTitle }: SignProps) {
@@ -24,11 +25,11 @@ export default function SignUp({ setMode, setIsModal, setTitle }: SignProps) {
   const [pw, setPw] = useState("");
 
   const handleSignUp = async () => {
+    // 1. 키보드 내리고 회원가입 폼 입력여부 검사 시작 (닉네임, 아이디, 비밀번호)
     Keyboard.dismiss();
     if (nickname.length === 0) {
       setIsModal(true);
       setTitle("닉네임을 입력해주세요.");
-      Keyboard.dismiss();
       return;
     }
 
@@ -38,33 +39,38 @@ export default function SignUp({ setMode, setIsModal, setTitle }: SignProps) {
     if (pw.length === 0 && isChecked) {
       setIsModal(true);
       setTitle("이메일 형식에 맞게 입력해주세요.");
-      Keyboard.dismiss();
       return;
     }
 
     if (pw.length < 6) {
       setIsModal(true);
       setTitle("비밀번호를 6자 이상 입력해주세요.");
-      Keyboard.dismiss();
       return;
     }
 
+    // 2. 회원가입 중 텍스트 출력
     setLoading(true);
 
+    // 3. 유저 테이블에 중복된 닉네임과 아이디가 존재하는지 확인
     try {
       if (await isNicknameTaken(nickname)) {
         setIsModal(true);
+        setLoading(false);
         setTitle("중복된 닉네임이 있습니다.");
-        Keyboard.dismiss();
+        return;
+      } else if (await isEmailTaken(id)) {
+        setIsModal(true);
+        setLoading(false);
+        setTitle("가입된 아이디가 존재합니다.");
         return;
       } else {
+        // 4. 모든 유효성 검사에 통과했다면 신규 회원의 유저 테이블 생성
         await createUser(id, pw, nickname);
         setMode(false);
       }
     } catch (err) {
-      setIsModal(true);
       setTitle("회원가입에 실패했습니다.");
-      Keyboard.dismiss();
+      setIsModal(true);
       setLoading(false);
     }
   };

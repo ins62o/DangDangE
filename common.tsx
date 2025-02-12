@@ -26,13 +26,14 @@ export const CommonStyle = StyleSheet.create({
     backgroundColor: "#fff",
     width: "80%",
     marginBottom: 10,
-    padding: Platform.OS === "ios" ? 20 : 15,
+    paddingLeft: 15,
     borderRadius: 8,
     shadowColor: "rgba(0, 0, 0, 0.2)",
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.2,
     shadowRadius: 20,
     elevation: 5,
+    height: 50,
   },
 
   button: {
