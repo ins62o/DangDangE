@@ -10,7 +10,6 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import Feather from "@expo/vector-icons/Feather";
 import { useRecoilValue } from "recoil";
 import { userData } from "../Atoms/userData";
-import Modal from "../components/Modal/ChoiceModal";
 import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { StackParamList } from "../types/stackType";
@@ -26,16 +25,14 @@ export default function More() {
   const [mode, setMode] = useState("");
   const ischecked = user.nickname === "게스트";
 
-  const handleModal = (title: string, info: string, mode: string) => {
+  const configureModal = (title: string, info: string, mode: string) => {
     setIsModal(true);
     setTitle(title);
     setInfo(info);
     setMode(mode);
   };
 
-  const login = () => {
-    navigation.navigate("LoginSignUp");
-  };
+  const login = () => navigation.navigate("LoginSignUp");
 
   return (
     <SafeAreaView style={styles.container}>
@@ -48,7 +45,7 @@ export default function More() {
           <TouchableOpacity
             style={styles.button}
             onPress={() =>
-              handleModal(
+              configureModal(
                 "혈당 목표치와 시간을 변경하시겠습니까?",
                 "기존에 설정한 내용은 사라집니다.",
                 "goal"
@@ -69,7 +66,7 @@ export default function More() {
           <TouchableOpacity
             style={styles.button}
             onPress={() =>
-              handleModal(
+              configureModal(
                 "서비스를 탈퇴하시겠습니까?",
                 "모든 정보가 삭제되고 복구할 수 없습니다.",
                 "delete"
@@ -93,7 +90,7 @@ export default function More() {
               ischecked
                 ? login
                 : () =>
-                    handleModal(
+                    configureModal(
                       "로그아웃하시겠습니까?",
                       "로그아웃 시 재 로그인이 필요합니다.",
                       "logout"

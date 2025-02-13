@@ -3,11 +3,27 @@ import { colors, fonts } from "../../common";
 import Feather from "@expo/vector-icons/Feather";
 
 type Modal = {
-  setIsModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsModal?: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsOneModal?: React.Dispatch<React.SetStateAction<boolean>>;
   title: string;
+  mode: string;
 };
 
-export default function OneClickModal({ setIsModal, title }: Modal) {
+export default function OneClickModal({
+  setIsModal,
+  setIsOneModal,
+  title,
+  mode,
+}: Modal) {
+  const handleModal = () => {
+    if (mode === "guest" && setIsOneModal) {
+      setIsOneModal(false);
+    }
+
+    if (mode === "LoginSignUp" && setIsModal) {
+      setIsModal(false);
+    }
+  };
   return (
     <View style={styles.container}>
       <View style={styles.modal}>
@@ -21,7 +37,7 @@ export default function OneClickModal({ setIsModal, title }: Modal) {
         <View style={styles.buttonContainer}>
           <TouchableOpacity
             style={[styles.button, styles.okbutton]}
-            onPress={() => setIsModal(false)}
+            onPress={handleModal}
           >
             <Text style={texts.ok}>확인</Text>
           </TouchableOpacity>
@@ -96,7 +112,6 @@ const texts = StyleSheet.create({
 
   info: {
     fontSize: fonts.body,
-    color: colors.Grey,
   },
 
   ok: {

@@ -4,12 +4,13 @@ import Feather from "@expo/vector-icons/Feather";
 import { StackParamList } from "../../types/stackType";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { userData } from "../../Atoms/userData";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState } from "react";
 import { deleteUser } from "../../utils/firebase/deleteUser";
 import { Blood, userBloodData } from "../../Atoms/bloodData";
+import { homeData } from "../../Atoms/homeData";
 
 type ModalProps = {
   setIsModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -27,13 +28,18 @@ export default function ChoiceModal({
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
   const setUser = useSetRecoilState(userData);
   const setBlood = useSetRecoilState<Blood>(userBloodData);
-
+  const setHome = useSetRecoilState(homeData);
   const [text, setText] = useState(title);
 
   // 로그아웃 : 사용자 Atom 변경, 모달 종료, AsyncStorage 값 제거, 홈 화면 전환
   const handleLogout = async () => {
     setUser({ id: "로그인이 필요합니다.", nickname: "게스트" });
     await AsyncStorage.clear();
+    setHome({
+      markingData: {},
+      countDay: 0,
+      bloodAvg: 0,
+    });
     setIsModal(false);
     navigation.navigate("Home");
   };

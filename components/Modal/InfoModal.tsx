@@ -1,17 +1,12 @@
-import {
-  Pressable,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { StyleSheet, View } from "react-native";
 import { colors, fonts, MyText } from "../../common";
 import AntDesign from "@expo/vector-icons/AntDesign";
-type Modal = {
+
+type ModalProp = {
   setIsModal: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export default function InfoModal({ setIsModal }: Modal) {
+export default function InfoModal({ setIsModal }: ModalProp) {
   return (
     <View style={styles.container}>
       <View style={styles.modal}>

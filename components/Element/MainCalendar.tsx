@@ -1,76 +1,84 @@
-import React, { useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { useEffect, useState } from "react";
 import { Calendar, LocaleConfig } from "react-native-calendars";
 import { colors } from "../../common";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "../../types/stackType";
 import { dateType } from "../../types/dateType";
+import { useRecoilState } from "recoil";
+import { homeData, MarkedDate } from "../../Atoms/homeData";
+import { getBloodData } from "../../utils/firebase/getBloodData";
+import { getTodayDate } from "../../utils/dateFn";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { FIRESTORE_DB } from "../../firebaseConfig";
-import { collection, getDocs, query, where } from "firebase/firestore";
 
-export default function MainCalendar() {
+type CalendarProp = {
+  setIsOneModal?: React.Dispatch<React.SetStateAction<boolean>>;
+  nickname?: string;
+};
+
+export default function MainCalendar({
+  setIsOneModal,
+  nickname,
+}: CalendarProp) {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
   const [date, setDate] = useState("");
+  const [home, setHome] = useRecoilState(homeData);
   const today = new Date();
   const year = today.getFullYear();
   const month = today.getMonth() + 1;
-  const day = today.getDate();
-  const [data, setData] = useState();
+  const todayDate = getTodayDate();
 
   useEffect(() => {
-    setDate(
-      `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(
-        2,
-        "0"
-      )}`
-    );
+    // 1. 오늘 날짜를 date에 저장
+    setDate(todayDate);
 
-    const getData = async () => {
+    const fetchUserBloodData = async () => {
       const id = await AsyncStorage.getItem("id");
-      const userRef = collection(FIRESTORE_DB, "blood");
-      const userQuery = query(userRef, where("id", "==", id));
-      const querySnapshot = await getDocs(userQuery);
+      if (!id) return;
 
-      const userDataArray = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
+      // 1. blood 컬렉션에서 id를 가지고 있는 문서들을 가져옴
+      const bloodData = await getBloodData(id);
 
-      const userData = userDataArray[0];
+      // 2. 데이터가 존재하는 날짜들을 찾아서 배열 형태로 만듬
+      const keys = Object.keys(bloodData).filter((ele) => ele !== "id");
+
+      // 3. 캘린더 마킹데이터를 만듬 (캘린더 라이브러리와 데이터 형식 일치)
+      const markingData: Record<string, MarkedDate> = {};
       const today = new Date().toISOString().slice(0, 10);
+      keys.forEach((data) => {
+        markingData[data] = { marked: true, dotColor: colors.Main };
 
-      const keys = Object.keys(userData).filter((ele) => ele !== "id");
-
-      const obj = {};
-      keys.forEach((item) => {
-        obj[item] = { marked: true, dotColor: colors.Main };
-
-        // 저장된 날짜와 현재 날짜가 같다면 selected 속성 추가
-        if (item === today) {
-          obj[item] = {
-            ...obj[item], // 기존 속성 유지
+        // 3-1. 오늘 날짜라면 dotColor 변경
+        if (data === today) {
+          markingData[data] = {
+            ...markingData[data],
             selected: true,
             selectedColor: colors.Main,
             dotColor: colors.Sub2,
           };
         }
       });
-      setData(obj);
+
+      // 4. 캘린더 마킹데이터를 Recoil Atom에 저장
+      setHome((prev) => ({ ...prev, markingData }));
     };
 
-    getData();
+    fetchUserBloodData();
   }, []);
+
+  const checkGuestAccess = (day: dateType) => {
+    if (nickname === "게스트" && setIsOneModal) {
+      setIsOneModal(true);
+    } else {
+      navigation.navigate("RecordBlood", { day });
+    }
+  };
 
   return (
     <Calendar
       monthFormat={"yyyy년 M월"}
       current={`${year}-${month}`}
-      onDayPress={(day: dateType) =>
-        navigation.navigate("RecordBlood", { day })
-      }
-      style={styles.calendar}
+      onDayPress={(day: dateType) => checkGuestAccess(day)}
       theme={{
         selectedDayBackgroundColor: colors.Main,
         selectedDayTextColor: "#fff",
@@ -79,21 +87,27 @@ export default function MainCalendar() {
           dayTextAtIndex0: {
             color: "red",
           },
+
           dayTextAtIndex1: {
             color: "black",
           },
+
           dayTextAtIndex2: {
             color: "black",
           },
+
           dayTextAtIndex3: {
             color: "black",
           },
+
           dayTextAtIndex4: {
             color: "black",
           },
+
           dayTextAtIndex5: {
             color: "black",
           },
+
           dayTextAtIndex6: {
             color: "blue",
           },
@@ -101,7 +115,7 @@ export default function MainCalendar() {
       }}
       markedDates={{
         [date]: { selected: true, selectedColor: colors.Main },
-        ...data,
+        ...home.markingData,
       }}
     />
   );
@@ -149,9 +163,3 @@ LocaleConfig.locales["ko"] = {
   today: "오늘",
 };
 LocaleConfig.defaultLocale = "ko";
-
-const styles = StyleSheet.create({
-  calendar: {
-    borderRadius: 8,
-  },
-});

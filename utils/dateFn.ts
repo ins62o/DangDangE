@@ -5,3 +5,15 @@ export const getWeek = (date: Date): number => {
 
   return Math.ceil((dayOfMonth + firstDayWeekday) / 7);
 };
+
+export const getTodayDate = () => {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth() + 1;
+  const days = today.getDate();
+  const todaydate = `${year}-${String(month).padStart(2, "0")}-${String(
+    days
+  ).padStart(2, "0")}`;
+
+  return todaydate;
+};

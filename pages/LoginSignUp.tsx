@@ -44,7 +44,13 @@ export default function LoginSignUp() {
           />
         )}
       </SafeAreaView>
-      {isModal && <OneClickModal setIsModal={setIsModal} title={title} />}
+      {isModal && (
+        <OneClickModal
+          setIsModal={setIsModal}
+          title={title}
+          mode="LoginSignUp"
+        />
+      )}
     </>
   );
 }
