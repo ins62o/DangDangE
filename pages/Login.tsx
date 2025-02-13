@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   Keyboard,
   Platform,
@@ -7,6 +6,7 @@ import {
   TextInput,
   View,
 } from "react-native";
+import { useState } from "react";
 import { colors, CommonStyle, fonts, MyText } from "../common";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -31,6 +31,7 @@ export default function Login({ setMode, setIsModal, setTitle }: LoginProps) {
   const [pw, setPw] = useState("");
   const [loading, setLoading] = useState(false);
   const [text, setText] = useState("로그인 시도중입니다.");
+  const auth = FIREBASE_AUTH;
 
   const handleLogin = async () => {
     // 1. 키보드 내리고 아이디 패스워드 입력했는지 확인
@@ -54,18 +55,12 @@ export default function Login({ setMode, setIsModal, setTitle }: LoginProps) {
 
     // 3. 파이어베이스 로그인 시도
     try {
-      const userCredential = await signInWithEmailAndPassword(
-        FIREBASE_AUTH,
-        id,
-        pw
-      );
+      const userCredential = await signInWithEmailAndPassword(auth, id, pw);
       const user = userCredential.user;
 
-      // 4. 액세스 토큰 - AsyncStorage 저장
-      const accessToken = await user.getIdToken();
-      await AsyncStorage.setItem("accessToken", accessToken);
+      // 4. 유저 id - AsyncStorage 저장
+      setText("사용자 정보를 담고 있습니다.");
       await AsyncStorage.setItem("id", id);
-      setText("사용자 정보를 담고 있습니다..");
 
       // 5. 파이어베이스에 유저가 있을 시 해당 유저의 데이터 - Recoil Atoms 저장
       if (user) {
@@ -78,7 +73,7 @@ export default function Login({ setMode, setIsModal, setTitle }: LoginProps) {
 
         // 5.1 기존 텍스트로 변경 후 페이지 네비게이션 진행
         setLoading(false);
-        userdata?.hasOwnProperty("type")
+        userdata?.type
           ? navigation.navigate("Tabs")
           : navigation.navigate("Welcome");
       }
