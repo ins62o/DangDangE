@@ -1,4 +1,3 @@
-import React, { useCallback, useEffect, useState } from "react";
 import {
   Text,
   View,
@@ -7,12 +6,11 @@ import {
   Pressable,
   TouchableOpacity,
 } from "react-native";
-
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useState } from "react";
+import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-
 import { colors, CommonStyle, fonts, MyText } from "../common";
-import TimeButton from "../components/Element/TimeButton";
+import BloodTimeCard from "../components/Card/BloodTimeCard";
 import BloodHeader from "../components/Element/BloodHeader";
 import { StackParamList } from "../types/stackType";
 import { Blood, userBloodData } from "../Atoms/bloodData";
@@ -28,24 +26,26 @@ export default function BloodInfo() {
     in: false,
   });
 
-  const isAnyClicked = Object.values(isClicked).some((value) => value === true);
+  const hasClickedItem = Object.values(isClicked).some((ele) => ele === true);
 
-  const handlePress = (type: "none" | "heal" | "in") => {
+  // UI 상에서 어떤 옵션이 선택되었는지 확인
+  const toggleSelection = (type: "none" | "heal" | "in") => {
     setIsClicked((prev) => {
       if (type === "none") {
-        return { none: !prev.none, heal: false, in: false };
+        return { none: true, heal: false, in: false };
       }
       return {
+        ...prev,
         none: false,
-        heal: type === "heal" ? !prev.heal : prev.heal,
-        in: type === "in" ? !prev.in : prev.in,
+        [type]: !prev[type],
       };
     });
   };
 
-  const handleheal = (title: string) => {
+  // 치료방법에 따른 Recoil Atom 업데이트
+  const handleHealSelection = (title: string) => {
     if (title === "안함") {
-      handlePress("none");
+      toggleSelection("none");
       setBlood((prev) => ({
         ...prev,
         heal: [],
@@ -53,8 +53,7 @@ export default function BloodInfo() {
       return;
     }
 
-    if (title === "약") handlePress("heal");
-    if (title === "인슐린") handlePress("in");
+    toggleSelection(title === "약" ? "heal" : "in");
 
     setBlood((prev) => ({
       ...prev,
@@ -81,7 +80,7 @@ export default function BloodInfo() {
           <Text style={texts.time}>측정 시간</Text>
           <View>
             {times.map((item, idx) => (
-              <TimeButton title={item} key={idx} />
+              <BloodTimeCard title={item} key={idx} />
             ))}
           </View>
         </View>
@@ -94,7 +93,7 @@ export default function BloodInfo() {
                 styles.button,
                 isClicked.none ? styles.access : styles.disable,
               ]}
-              onPress={() => handleheal("안함")}
+              onPress={() => handleHealSelection("안함")}
             >
               <Text
                 style={[
@@ -110,7 +109,7 @@ export default function BloodInfo() {
                 styles.button,
                 isClicked.heal ? styles.access : styles.disable,
               ]}
-              onPress={() => handleheal("약")}
+              onPress={() => handleHealSelection("약")}
             >
               <Text
                 style={[
@@ -126,7 +125,7 @@ export default function BloodInfo() {
                 styles.button,
                 isClicked.in ? styles.access : styles.disable,
               ]}
-              onPress={() => handleheal("인슐린")}
+              onPress={() => handleHealSelection("인슐린")}
             >
               <Text
                 style={[
@@ -144,12 +143,12 @@ export default function BloodInfo() {
         <TouchableOpacity
           style={[
             CommonStyle.button,
-            blood.time?.length === 0 || !isAnyClicked
+            blood.time?.length === 0 || !hasClickedItem
               ? styles.uncustom
               : styles.custom,
           ]}
           onPress={() => navigation.navigate("BloodGoal")}
-          disabled={blood.time?.length === 0 || !isAnyClicked}
+          disabled={blood.time?.length === 0 || !hasClickedItem}
         >
           <MyText style={texts.button}>다음</MyText>
         </TouchableOpacity>

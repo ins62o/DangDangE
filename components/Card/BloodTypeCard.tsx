@@ -8,7 +8,7 @@ import {
   Pressable,
   Platform,
 } from "react-native";
-import { colors, fonts, MyText } from "../../common";
+import { colors, fonts } from "../../common";
 
 type BloodType = {
   id: string;
@@ -25,7 +25,7 @@ type BloodTypeBoxProps = {
   onPress: () => void;
 };
 
-export default function BloodTypeBox({
+export default function BloodTypeCard({
   data,
   isClicked,
   onPress,
@@ -35,13 +35,13 @@ export default function BloodTypeBox({
   const dynamicStyle = isClicked ? styles.Onbackground : styles.Offbackground;
   const dynamicText = isClicked ? texts.black : texts.title;
 
-  const handleData = () => {
+  const updateTitle = () => {
     onPress();
     setTitle(title);
   };
 
   return (
-    <Pressable style={[styles.container, dynamicStyle]} onPress={handleData}>
+    <Pressable style={[styles.container, dynamicStyle]} onPress={updateTitle}>
       <View style={styles.imageContainer}>
         <Image source={isClicked ? onimage : offimage} />
       </View>
@@ -69,22 +69,27 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     padding: Platform.OS === "ios" ? 15 : 10,
   },
+
   Onbackground: {
     backgroundColor: colors.Sub2,
     borderColor: colors.Sub2,
   },
+
   Offbackground: {
     backgroundColor: "#fff",
   },
+
   imageContainer: {
     flex: 0.3,
     justifyContent: "center",
     alignItems: "center",
   },
+
   infoContainer: {
     flex: 0.7,
     padding: 5,
   },
+
   infoTextContainer: {
     paddingTop: 5,
   },

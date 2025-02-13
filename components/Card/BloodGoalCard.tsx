@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
-import { colors, fonts, MyText } from "../../common";
+import { fonts, MyText } from "../../common";
 
 type BloodProps = {
   title: string;
@@ -16,7 +16,8 @@ export default function BloodBox({
   setTitle,
   setType,
 }: BloodProps) {
-  const handleButton = (type: string) => {
+  // 모달 상태, 제목, 타입 상태 변경
+  const handleOpenModal = (type: string) => {
     setIsModal(true);
     setTitle(title);
     setType(type);
@@ -32,7 +33,7 @@ export default function BloodBox({
           <MyText style={texts.sub}>최저</MyText>
           <TouchableOpacity
             style={styles.minbutton}
-            onPress={() => handleButton("min")}
+            onPress={() => handleOpenModal("min")}
           >
             <MyText style={texts.bloodText}>{`${blood[0]}mg/dL`}</MyText>
           </TouchableOpacity>
@@ -41,7 +42,7 @@ export default function BloodBox({
           <MyText style={texts.sub}>최고</MyText>
           <TouchableOpacity
             style={styles.minbutton}
-            onPress={() => handleButton("max")}
+            onPress={() => handleOpenModal("max")}
           >
             <MyText style={texts.bloodText}>{`${blood[1]}mg/dL`}</MyText>
           </TouchableOpacity>

@@ -1,4 +1,3 @@
-import React, { useState, useRef, useEffect } from "react";
 import {
   View,
   Text,
@@ -7,14 +6,16 @@ import {
   Animated,
   Pressable,
 } from "react-native";
+import { useState } from "react";
 import { colors, CommonStyle, fonts, MyText } from "../../common";
 import Keyboard from "../Element/Keyboard";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { Blood, userBloodData } from "../../Atoms/bloodData";
-import { useRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import { BloodData } from "../../pages/RecordBlood";
 import { userType } from "../../types/userType";
 import { getWeek } from "../../utils/dateFn";
+import { useSlideAni } from "../../hooks/animation/useSlideAni";
 
 type keyboardProps = {
   setIsModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -33,35 +34,17 @@ export default function KeyboardModal({
   mode,
   userData,
 }: keyboardProps) {
-  const [blood, setBlood] = useRecoilState<Blood>(userBloodData);
+  const setBlood = useSetRecoilState<Blood>(userBloodData);
+  const { slide, slideTo } = useSlideAni();
   const [text, setText] = useState("0");
+  const slideDown = () => slideTo(600);
 
-  const slide = useRef(new Animated.Value(600));
-  const slideUp = () => {
-    Animated.timing(slide.current, {
-      toValue: 0,
-      duration: 800,
-      useNativeDriver: true,
-    }).start();
-  };
-
-  const slideDown = () => {
-    Animated.timing(slide.current, {
-      toValue: 600,
-      duration: 800,
-      useNativeDriver: true,
-    }).start();
-  };
-
-  useEffect(() => {
-    slideUp();
-  }, []);
-
-  const back: JSX.Element = (
+  const deleteIcon: JSX.Element = (
     <FontAwesome5 name="backspace" size={24} color="black" />
   );
-  const changeText = (numberText: string) =>
-    setText((prev) => (prev === "0" ? numberText : prev + numberText));
+
+  const addNumber = (numtext: string) =>
+    setText((prev) => (prev === "0" ? numtext : prev + numtext));
 
   const deleteText = () => {
     setText((prev) => (prev.length > 1 ? prev.slice(0, -1) : "0"));
@@ -69,7 +52,15 @@ export default function KeyboardModal({
 
   const clearText = () => setText("0");
 
-  const handleSave = () => {
+  const closeModal = () => {
+    slideDown();
+    setTimeout(() => {
+      setIsModal(false);
+    }, 800);
+  };
+
+  // 혈당 목표치 저장 ( "user" 문서 )
+  const saveBloodGoal = () => {
     setBlood((prev) => ({
       ...prev,
       goal: {
@@ -81,17 +72,10 @@ export default function KeyboardModal({
       },
     }));
 
-    setIsModal(false);
+    closeModal();
   };
 
-  const closeModal = () => {
-    slideDown();
-    setTimeout(() => {
-      setIsModal(false);
-    }, 800);
-  };
-
-  const SaveBlood = async () => {
+  const SaveBloodData = async () => {
     if (typeof title !== "string") return;
 
     const week = String(getWeek(new Date()));
@@ -130,7 +114,7 @@ export default function KeyboardModal({
       <Animated.View
         style={[
           styles.keyboardContainer,
-          { transform: [{ translateY: slide.current }] },
+          { transform: [{ translateY: slide }] },
         ]}
       >
         <Pressable style={styles.noneEventContainer}>
@@ -142,30 +126,30 @@ export default function KeyboardModal({
           </View>
           <View style={styles.keyContainer}>
             <View style={styles.numberContainer}>
-              <Keyboard buttonText="1" changeText={changeText} />
-              <Keyboard buttonText="2" changeText={changeText} />
-              <Keyboard buttonText="3" changeText={changeText} />
+              <Keyboard buttonText="1" changeText={addNumber} />
+              <Keyboard buttonText="2" changeText={addNumber} />
+              <Keyboard buttonText="3" changeText={addNumber} />
             </View>
             <View style={styles.numberContainer}>
-              <Keyboard buttonText="4" changeText={changeText} />
-              <Keyboard buttonText="5" changeText={changeText} />
-              <Keyboard buttonText="6" changeText={changeText} />
+              <Keyboard buttonText="4" changeText={addNumber} />
+              <Keyboard buttonText="5" changeText={addNumber} />
+              <Keyboard buttonText="6" changeText={addNumber} />
             </View>
             <View style={styles.numberContainer}>
-              <Keyboard buttonText="7" changeText={changeText} />
-              <Keyboard buttonText="8" changeText={changeText} />
-              <Keyboard buttonText="9" changeText={changeText} />
+              <Keyboard buttonText="7" changeText={addNumber} />
+              <Keyboard buttonText="8" changeText={addNumber} />
+              <Keyboard buttonText="9" changeText={addNumber} />
             </View>
             <View style={styles.numberContainer}>
               <Keyboard buttonText="C" changeText={clearText} />
-              <Keyboard buttonText="0" changeText={changeText} />
-              <Keyboard buttonText={back} changeText={deleteText} />
+              <Keyboard buttonText="0" changeText={addNumber} />
+              <Keyboard buttonText={deleteIcon} changeText={deleteText} />
             </View>
           </View>
           <View style={styles.buttonContainer}>
             <TouchableOpacity
               style={[CommonStyle.button, styles.custombutton]}
-              onPress={mode === "blood" ? SaveBlood : handleSave}
+              onPress={mode === "blood" ? SaveBloodData : saveBloodGoal}
             >
               <Text style={texts.button}>저장</Text>
             </TouchableOpacity>

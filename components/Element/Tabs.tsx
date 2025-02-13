@@ -10,16 +10,6 @@ import { Platform, Pressable, TouchableOpacity } from "react-native";
 const Tab = createBottomTabNavigator();
 
 export default function Tabs() {
-  // const [token, setToken] = useState<string | null>(null);
-
-  // useEffect(() => {
-  //   const getToken = async () => {
-  //     const tok = await AsyncStorage.getItem("accessToken");
-  //     setToken(tok);
-  //   };
-  //   getToken();
-  // }, []);
-
   return (
     <Tab.Navigator
       screenOptions={{

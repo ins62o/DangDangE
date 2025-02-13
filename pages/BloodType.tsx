@@ -1,33 +1,27 @@
 import { useState } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  SafeAreaView,
-  TouchableOpacity,
-} from "react-native";
-
+import { StyleSheet, View, SafeAreaView, TouchableOpacity } from "react-native";
 import { useSetRecoilState } from "recoil";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-
 import { colors, CommonStyle, fonts, MyText } from "../common";
 import { BloodData } from "../InitialData";
 import { Blood, userBloodData } from "../Atoms/bloodData";
 import { StackParamList } from "../types/stackType";
-import BloodTypeBox from "../components/Card/BloodTypeBox";
 import BloodHeader from "../components/Element/BloodHeader";
+import BloodTypeCard from "../components/Card/BloodTypeCard";
 
 export default function BloodType() {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
+  const setBlood = useSetRecoilState<Blood>(userBloodData);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [title, setTitle] = useState<string>("");
-  const setBlood = useSetRecoilState<Blood>(userBloodData);
 
-  const handlePress = (id: string) =>
+  // selectedId 상태값 변경
+  const toggleSelectedId = (id: string) =>
     setSelectedId((prevId) => (prevId === id ? null : id));
 
-  const choiceType = () => {
+  // Recoil Atom 데이터 추가
+  const updateBloodType = () => {
     setBlood((prev) => ({ ...prev, type: title }));
     navigation.navigate("BloodInfo");
   };
@@ -45,10 +39,10 @@ export default function BloodType() {
         <View style={styles.bloodTypeContainer}>
           {BloodData.map((data) => (
             <View style={styles.typeContainer} key={data.id}>
-              <BloodTypeBox
+              <BloodTypeCard
                 data={data}
                 isClicked={selectedId === data.id}
-                onPress={() => handlePress(data.id)}
+                onPress={() => toggleSelectedId(data.id)}
                 setTitle={setTitle}
               />
             </View>
@@ -61,7 +55,7 @@ export default function BloodType() {
             CommonStyle.button,
             selectedId ? styles.custom : styles.uncustom,
           ]}
-          onPress={choiceType}
+          onPress={updateBloodType}
           disabled={!selectedId}
         >
           <MyText style={texts.button}>다음</MyText>

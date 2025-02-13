@@ -1,5 +1,4 @@
-import { Dispatch, SetStateAction, useState } from "react";
-import { Platform, Pressable, StyleSheet, Text } from "react-native";
+import { Pressable, StyleSheet } from "react-native";
 import { colors, fonts, MyText } from "../../common";
 import { useRecoilState } from "recoil";
 import { Blood, userBloodData } from "../../Atoms/bloodData";
@@ -11,9 +10,12 @@ type TimeButtonProps = {
 
 export default function TimeButton({ title }: TimeButtonProps) {
   const [blood, setBlood] = useRecoilState<Blood>(userBloodData);
-  const isClicked = blood.time.includes(title);
+  const isTimeSelected = blood.time.includes(title);
+  const buttonStyle = isTimeSelected ? styles.access : styles.disable;
+  const textStyle = isTimeSelected ? texts.accessText : texts.disableText;
 
-  const handleClick = () => {
+  // Recoil Atom 업데이트 및 time 배열대로 정렬
+  const handleTimeToggle = () => {
     setBlood((prev) => {
       const updatedTime = prev.time?.includes(title)
         ? prev.time.filter((item) => item !== title)
@@ -27,12 +29,9 @@ export default function TimeButton({ title }: TimeButtonProps) {
     });
   };
 
-  const dynamicStyle = isClicked ? styles.access : styles.disable;
-  const dynamicText = isClicked ? texts.accessText : texts.disableText;
-
   return (
-    <Pressable style={[styles.button, dynamicStyle]} onPress={handleClick}>
-      <MyText style={dynamicText}>{title}</MyText>
+    <Pressable style={[styles.button, buttonStyle]} onPress={handleTimeToggle}>
+      <MyText style={textStyle}>{title}</MyText>
     </Pressable>
   );
 }
@@ -50,9 +49,11 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     justifyContent: "center",
   },
+
   access: {
     backgroundColor: colors.Sub2,
   },
+
   disable: {
     backgroundColor: "#fff",
   },
@@ -62,6 +63,7 @@ const texts = StyleSheet.create({
   accessText: {
     fontSize: fonts.body,
   },
+
   disableText: {
     fontSize: fonts.body,
     color: colors.Nobel,

@@ -9,6 +9,7 @@ import { userData } from "../../Atoms/userData";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState } from "react";
 import { deleteUser } from "../../utils/firebase/deleteUser";
+import { Blood, userBloodData } from "../../Atoms/bloodData";
 
 type ModalProps = {
   setIsModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -25,6 +26,8 @@ export default function ChoiceModal({
 }: ModalProps) {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
   const setUser = useSetRecoilState(userData);
+  const setBlood = useSetRecoilState<Blood>(userBloodData);
+
   const [text, setText] = useState(title);
 
   // 로그아웃 : 사용자 Atom 변경, 모달 종료, AsyncStorage 값 제거, 홈 화면 전환
@@ -36,7 +39,11 @@ export default function ChoiceModal({
   };
 
   // 목표치 설정 : 사용자 혈당 정보 입력 페이지로 전환
-  const goToGoalSetting = () => navigation.navigate("BloodType");
+  const goToGoalSetting = () => {
+    setBlood((prev) => ({ ...prev, time: [] }));
+    setIsModal(false);
+    navigation.navigate("BloodType");
+  };
 
   // 회원 탈퇴 : 회원 탈퇴 후 홈 화면 전환
   const deleteAccount = async () => {

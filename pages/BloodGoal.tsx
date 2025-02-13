@@ -1,60 +1,43 @@
-import React, { useState } from "react";
 import {
   View,
   SafeAreaView,
   StyleSheet,
-  Text,
   ScrollView,
   TouchableOpacity,
   KeyboardAvoidingView,
 } from "react-native";
-import BloodHeader from "../components/Element/BloodHeader";
+import { useState } from "react";
 import { colors, CommonStyle, fonts, MyText } from "../common";
-import BloodBox from "../components/Card/BloodBox";
+import BloodHeader from "../components/Element/BloodHeader";
+import KeyboardModal from "../components/Modal/KeyboardModal";
+import BloodGoalCard from "../components/Card/BloodGoalCard";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "../types/stackType";
-import KeyboardModal from "../components/Modal/KeyboardModal";
-import { useRecoilState } from "recoil";
+import { useRecoilValue } from "recoil";
 import { Blood, userBloodData } from "../Atoms/bloodData";
-import {
-  collection,
-  doc,
-  getDocs,
-  getFirestore,
-  query,
-  updateDoc,
-  where,
-} from "firebase/firestore";
 import { User, userData } from "../Atoms/userData";
+import { createBloodData } from "../utils/firebase/createBloodData";
 
 export default function BloodGoal() {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
-  const [isModal, setIsModal] = useState(false);
-  const [blood, setBlood] = useRecoilState<Blood>(userBloodData);
-  const [user, setUser] = useRecoilState<User>(userData);
+  const bloodData = useRecoilValue<Blood>(userBloodData);
+  const user = useRecoilValue<User>(userData);
   const [title, setTitle] = useState("");
   const [type, setType] = useState("");
   const [text, setText] = useState("완료");
-  const db = getFirestore();
+  const [isModal, setIsModal] = useState(false);
 
-  const handleEnd = async () => {
-    const q = query(collection(db, "users"), where("id", "==", user.id));
+  // 유저 테이블 혈당 데이터 업데이트
+  const updateUserBloodData = async () => {
+    if (!user.id) return;
     setText("사용자 정보를 만들고 있습니다..");
     try {
-      const querySnapshot = await getDocs(q);
-
-      if (!querySnapshot.empty) {
-        const userDoc = querySnapshot.docs[0];
-        const userDocRef = doc(db, "users", userDoc.id);
-
-        await updateDoc(userDocRef, blood);
-
-        navigation.navigate("Tabs");
-        setBlood((prev) => ({ ...prev, time: [] }));
-      } else {
-      }
-    } catch (error) {}
+      await createBloodData(user.id, bloodData);
+      navigation.navigate("Tabs");
+    } catch (err) {
+      setText("혈당 데이터를 만드는 중 오류가 발생했습니다.");
+    }
   };
 
   return (
@@ -87,12 +70,12 @@ export default function BloodGoal() {
                 style={styles.scrollContainer}
                 showsVerticalScrollIndicator={false}
               >
-                {blood.time.map((item, idx) => (
-                  <BloodBox
+                {bloodData.time.map((item, idx) => (
+                  <BloodGoalCard
                     title={item}
                     key={idx}
                     setIsModal={setIsModal}
-                    blood={blood.goal[item]}
+                    blood={bloodData.goal[item]}
                     setTitle={setTitle}
                     setType={setType}
                   />
@@ -103,7 +86,7 @@ export default function BloodGoal() {
           <View style={styles.buttonContainer}>
             <TouchableOpacity
               style={[CommonStyle.button, styles.custom]}
-              onPress={handleEnd}
+              onPress={updateUserBloodData}
             >
               <MyText style={texts.button}>{text}</MyText>
             </TouchableOpacity>
