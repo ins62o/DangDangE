@@ -1,34 +1,44 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { colors, fonts } from "../../common";
 import Feather from "@expo/vector-icons/Feather";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { StackParamList } from "../../types/stackType";
 
 type Modal = {
   setIsModal?: React.Dispatch<React.SetStateAction<boolean>>;
-  setIsOneModal?: React.Dispatch<React.SetStateAction<boolean>>;
   title: string;
   mode: string;
 };
 
-export default function OneClickModal({
-  setIsModal,
-  setIsOneModal,
-  title,
-  mode,
-}: Modal) {
+export default function OneClickModal({ setIsModal, title, mode }: Modal) {
+  const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
+
   const handleModal = () => {
-    if (mode === "guest" && setIsOneModal) {
-      setIsOneModal(false);
+    if (mode === "guest" && setIsModal) {
+      setIsModal(false);
+      navigation.navigate("LoginSignUp");
     }
 
     if (mode === "LoginSignUp" && setIsModal) {
       setIsModal(false);
+    }
+
+    if (mode === "save" && setIsModal) {
+      setIsModal(false);
+      navigation.navigate("Tabs");
     }
   };
   return (
     <View style={styles.container}>
       <View style={styles.modal}>
         <View style={styles.iconContainer}>
-          <Feather name="alert-circle" size={50} color={colors.Nobel} />
+          {mode === "save" ? (
+            <AntDesign name="checkcircleo" size={50} color={colors.Main} />
+          ) : (
+            <Feather name="alert-circle" size={50} color={colors.Nobel} />
+          )}
         </View>
         <View style={styles.textContainer}>
           <Text style={texts.title}>{title}</Text>

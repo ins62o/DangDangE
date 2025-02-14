@@ -116,7 +116,7 @@ export default function Home() {
       {isModal && <InfoModal setIsModal={setIsModal} />}
       {isOneModal && (
         <OneClickModal
-          setIsOneModal={setIsOneModal}
+          setIsModal={setIsOneModal}
           mode="guest"
           title="로그인이 필요합니다."
         />

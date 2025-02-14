@@ -11,10 +11,8 @@ import Home from "./pages/Home";
 import { StackParamList } from "./types/stackType";
 import Tabs from "./components/Element/Tabs";
 import LoginSignUp from "./pages/LoginSignUp";
-import WeekRecord from "./pages/WeekRecord";
-import MonthRecord from "./pages/MonthRecord";
 import { Text, TextInput } from "react-native";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import * as Font from "expo-font";
 
 interface TextWithDefaultProps extends Text {
@@ -63,8 +61,6 @@ export default function App() {
           <Stack.Screen name="BloodInfo" component={BloodInfo} />
           <Stack.Screen name="BloodGoal" component={BloodGoal} />
           <Stack.Screen name="RecordBlood" component={RecordBlood} />
-          <Stack.Screen name="WeekRecord" component={WeekRecord} />
-          <Stack.Screen name="MonthRecord" component={MonthRecord} />
           <Stack.Screen name="Home" component={Home} />
         </Stack.Navigator>
       </NavigationContainer>
