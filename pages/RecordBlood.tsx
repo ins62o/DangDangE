@@ -27,143 +27,105 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import SkBloodCard from "../skeleton/skBloodCard";
 import SkTextCard from "../skeleton/skTextCard";
 import { times } from "../InitialData";
+import { getUser } from "../utils/firebase/getUser";
+import { getBloodData } from "../utils/firebase/getBloodData";
+import OneClickModal from "../components/Modal/OneClickModal";
+import { updateBlood } from "../utils/firebase/updateBlood";
+import { getTodayDate } from "../utils/dateFn";
 
 type RecordBloodProps = {
   route: RouteProp<StackParamList, "RecordBlood">;
 };
 
-export interface BloodData {
+export type BloodData = {
   blood: Record<string, string>;
   memo: string;
   week: string;
   id?: string;
-}
+};
+
+type UserBlood = {
+  id: string;
+  [key: string]: BloodData | string;
+};
 
 export default function RecordBlood({ route }: RecordBloodProps) {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
-
+  const [userData, setUserData] = useState<userType | null>(null);
+  const [bloodData, setBloodData] = useState<BloodData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isModal, setIsModal] = useState(false);
+  const [isOneModal, setIsOneModal] = useState(false);
+  const [isMemo, setIsMemo] = useState(false);
+  const [text, setText] = useState<string>("");
+  const [title, setTitle] = useState("");
+  const [info, setInfo] = useState("");
   const date = new Date();
   const today = date.getDate();
   const month = date.getMonth() + 1;
   const day = route.params?.day;
-
-  const [userData, setUserData] = useState<userType | null>(null);
-  const [bloodData, setBloodData] = useState<BloodData | null>(null);
-
-  const [isLoading, setIsLoading] = useState(true);
-  const [isModal, setIsModal] = useState(false);
-  const [isMemo, setIsMemo] = useState(false);
-
-  const [text, setText] = useState("");
-  const [title, setTitle] = useState("");
-
-  const isBlood = useMemo(() => {
-    if (isLoading) return null;
-
-    const bloodKeys = bloodData
-      ? Object.keys(bloodData.blood)
-      : userData?.time ?? [];
-
-    return bloodKeys.sort((a, b) => times.indexOf(a) - times.indexOf(b));
-  }, [bloodData, userData, isLoading]);
+  const bloodKeys = bloodData
+    ? Object.keys(bloodData.blood)
+    : userData?.time ?? [];
+  const isBlood = bloodKeys.sort((a, b) => times.indexOf(a) - times.indexOf(b));
 
   useEffect(() => {
-    const getData = async () => {
-      setIsLoading(true);
+    const initialBloodData = async () => {
       const id = await AsyncStorage.getItem("id");
-      const user = await useUserData();
+      if (!id) return;
+
+      setIsLoading(true);
+
+      // 1. 유저 데이터 가져옴
+      const user = await getUser();
       setUserData(user);
 
-      try {
-        const bloodRef = collection(FIRESTORE_DB, "blood");
-        const q = query(bloodRef, where("id", "==", id));
-        const querySnapshot = await getDocs(q);
+      // 2. 해당 id의 혈당 데이터 가져옴
+      const userblood: UserBlood = await getBloodData(id);
 
-        if (querySnapshot.empty) {
-          const newUserData = { id };
-          await addDoc(bloodRef, newUserData);
-          setIsLoading(false);
-          return;
-        }
-
-        for (const userDoc of querySnapshot.docs) {
-          const userDocId = userDoc.id;
-
-          const recordRef = doc(FIRESTORE_DB, "blood", userDocId);
-          const recordSnap = await getDoc(recordRef);
-
-          if (recordSnap.exists()) {
-            const recordData = recordSnap.data();
-            const selectedData = day?.dateString
-              ? recordData[day.dateString]
-              : null;
-
-            setBloodData(selectedData);
-            setText(selectedData.memo);
-          }
-          setIsLoading(false);
-        }
-      } catch (err) {
+      // 3. 유저 데이터가 없으면 새로운 문서 생성
+      if (!userblood) {
+        await addDoc(collection(FIRESTORE_DB, "blood"), { id });
         setIsLoading(false);
+        return;
       }
+
+      // 4. 선택된 날짜의 혈당 데이터 가져옴
+      const selectedData =
+        day?.dateString && userblood[day.dateString]
+          ? userblood[day.dateString]
+          : null;
+
+      // 5. 상태 업데이트 (안전성 보장)
+      if (selectedData && typeof selectedData !== "string") {
+        setBloodData(selectedData);
+        setText(selectedData.memo ?? "");
+      }
+
+      setIsLoading(false);
     };
 
-    getData();
-  }, [setBloodData]);
+    initialBloodData();
+  }, [day?.dateString]);
 
+  // 혈당 데이터 저장
   const handleSave = async () => {
-    const id = await AsyncStorage.getItem("id");
+    const todayString = getTodayDate();
+    const today = new Date(todayString).getTime();
 
-    const bloodRef = collection(FIRESTORE_DB, "blood");
-    const q = query(bloodRef, where("id", "==", id));
-    const querySnapshot = await getDocs(q);
+    if (today < (day?.timestamp ?? 0)) {
+      setInfo("해당 날짜에 입력해주세요.");
+      setIsOneModal(true);
+      return;
+    } else {
+      if (!day || !bloodData) return;
 
-    if (!querySnapshot.empty) {
-      const docSnapshot = querySnapshot.docs[0];
-      const docRef = doc(FIRESTORE_DB, "blood", docSnapshot.id);
+      await updateBlood({ day, bloodData, text });
 
-      const existingData = docSnapshot.data();
-
-      const updatedData = {
-        ...existingData,
-        [day?.dateString ?? "default_date"]: {
-          ...bloodData,
-          memo: text,
-        },
-      };
-
-      await updateDoc(docRef, updatedData);
+      setInfo("혈당 입력을 완료했습니다.");
+      setIsOneModal(true);
     }
-
-    navigation.navigate("Tabs");
   };
-
-  const bloodStatus = useMemo(() => {
-    return isBlood?.map((title) => {
-      const [min, max] = (userData?.goal[title] ?? [0, 0]).map(Number);
-      let text = "";
-      let color = "";
-
-      if (
-        bloodData?.blood?.[title] === undefined ||
-        bloodData?.blood?.[title] === ""
-      ) {
-        text = "미완료";
-        color = colors.Nobel;
-      } else if (+bloodData.blood[title] < min) {
-        text = "저혈당";
-        color = "#0D33B3";
-      } else if (+bloodData.blood[title] > max) {
-        text = "초과";
-        color = "#FD004D";
-      } else {
-        text = "정상";
-        color = colors.Main;
-      }
-
-      return { title, text, color, blood: bloodData?.blood?.[title] || "0" };
-    });
-  }, [bloodData, isBlood, userData]);
 
   return (
     <>
@@ -256,6 +218,10 @@ export default function RecordBlood({ route }: RecordBloodProps) {
 
       {isMemo && (
         <MemoModal setIsMemo={setIsMemo} memo={text} changeText={setText} />
+      )}
+
+      {isOneModal && (
+        <OneClickModal setIsModal={setIsOneModal} title={info} mode="save" />
       )}
     </>
   );

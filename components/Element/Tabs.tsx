@@ -1,11 +1,10 @@
+import { Platform, TouchableOpacity } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import Login from "../../pages/Login";
 import { colors } from "../../common";
 import Entypo from "@expo/vector-icons/Entypo";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Home from "../../pages/Home";
 import More from "../../pages/More";
-import { Platform, Pressable, TouchableOpacity } from "react-native";
+import AntDesign from "@expo/vector-icons/AntDesign";
 
 const Tab = createBottomTabNavigator();
 
@@ -20,7 +19,7 @@ export default function Tabs() {
           <TouchableOpacity {...props} activeOpacity={1} />
         ),
         tabBarStyle: {
-          height: Platform.OS === "ios" ? 83 : 55,
+          height: Platform.OS === "ios" ? 83 : 100,
         },
       }}
     >
@@ -48,8 +47,8 @@ export default function Tabs() {
         options={{
           title: "더보기",
           tabBarIcon: ({ color }) => (
-            <FontAwesome
-              name="user"
+            <AntDesign
+              name="bars"
               size={Platform.OS === "ios" ? 24 : 20}
               color={color}
             />

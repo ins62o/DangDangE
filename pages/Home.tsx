@@ -31,10 +31,9 @@ export default function Home() {
   const [home, setHome] = useRecoilState(homeData);
   const [isModal, setIsModal] = useState(false);
   const [isOneModal, setIsOneModal] = useState(false);
+  const [random] = useState(() => Math.trunc(Math.random() * 20));
   const windowHeight = useWindowDimensions().height;
-  const random = Math.trunc(Math.random() * 20);
   const today = getTodayDate();
-
   const day = {
     dateString: today,
   };
@@ -44,17 +43,14 @@ export default function Home() {
       const id = await AsyncStorage.getItem("id");
       if (!id) return;
 
-      // 1. 오늘 평균 당화혈 색소 - Recoil Atom에 저장
+      // 1. 오늘 평균 당화혈 색소
       const HbA1c = await getHbA1c(id, today);
 
-      // 2. Recoil Atom에 해당 bloodAvg를 넣어줌
-      setHome((prev) => ({ ...prev, bloodAvg: Number(HbA1c) }));
-
-      // 3. 현재 사용자의 데이터를 가져와 날짜를 뽑아냄
+      // 2. 현재 사용자의 데이터를 가져와 날짜를 뽑아냄
       const countDay = await countDate(id);
 
-      // 4. Recoil Atom에 해당 CountDay를 넣어줌
-      setHome((prev) => ({ ...prev, countDay }));
+      // 3. Recoil Atom에 해당 bloodAvg를 넣어줌
+      setHome((prev) => ({ ...prev, bloodAvg: Number(HbA1c), countDay }));
     };
 
     getBlood();
@@ -69,7 +65,7 @@ export default function Home() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <MainCalendar setIsOneModal={setIsOneModal} nickname={user.nickname} />
       <View style={styles.contentContainer}>
         <View style={[styles.content, { height: (windowHeight / 2) * 0.6 }]}>
@@ -122,7 +118,7 @@ export default function Home() {
         />
       )}
       <StatusBar style="dark" />
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -130,7 +126,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    paddingTop: 30,
+    paddingTop: Platform.OS === "ios" ? 60 : 30,
   },
 
   contentContainer: {

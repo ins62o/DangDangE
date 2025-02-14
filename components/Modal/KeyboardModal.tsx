@@ -75,29 +75,29 @@ export default function KeyboardModal({
     closeModal();
   };
 
+  // 혈당 데이터 저장
   const SaveBloodData = async () => {
     if (typeof title !== "string") return;
 
+    // 1. 몇 주차인지 구하기
     const week = String(getWeek(new Date()));
-    if (!week) return;
 
+    // 2. Recoil Atom에 데이터 추가
     if (setBloodData) {
       setBloodData((prev) => {
         const timesArray = userData?.time ?? [];
 
-        // 🟢 기존 데이터가 없을 경우 → 초기화
         if (!prev || !prev.blood) {
           const initialBlood = Object.fromEntries(
             timesArray.map((time) => [time, "0"])
           );
           return {
             blood: { ...initialBlood, [title]: text },
-            memo: prev?.memo ?? "", // memo가 없으면 빈 문자열 할당
+            memo: prev?.memo ?? "",
             week,
           };
         }
 
-        // 🟢 기존 데이터가 있는 경우 → 업데이트
         return {
           blood: { ...prev.blood, [title]: text },
           memo: prev.memo ?? "",

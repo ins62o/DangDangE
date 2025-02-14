@@ -10,9 +10,15 @@ type Modal = {
   setIsModal?: React.Dispatch<React.SetStateAction<boolean>>;
   title: string;
   mode: string;
+  icon?: string;
 };
 
-export default function OneClickModal({ setIsModal, title, mode }: Modal) {
+export default function OneClickModal({
+  setIsModal,
+  title,
+  mode,
+  icon,
+}: Modal) {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
 
   const handleModal = () => {
@@ -34,7 +40,7 @@ export default function OneClickModal({ setIsModal, title, mode }: Modal) {
     <View style={styles.container}>
       <View style={styles.modal}>
         <View style={styles.iconContainer}>
-          {mode === "save" ? (
+          {icon === "check" ? (
             <AntDesign name="checkcircleo" size={50} color={colors.Main} />
           ) : (
             <Feather name="alert-circle" size={50} color={colors.Nobel} />
