@@ -33,13 +33,13 @@ export const deleteUser = async ({ setText, setUser }: deleteProps) => {
   const bloodSnapshot = await getDocs(bloodQuery);
   await Promise.all(bloodSnapshot.docs.map((doc) => deleteDoc(doc.ref)));
 
-  // 4. 로그인 정보 초기화
-  await AsyncStorage.clear();
-  setUser({ id: "로그인이 필요합니다.", nickname: "게스트" });
-
-  // 5. 현재 로그인 하고 있는 유저 삭제
+  // 4. 현재 로그인 하고 있는 유저 삭제
   const Fireuser = FIREBASE_AUTH.currentUser;
   if (Fireuser) {
     await Fireuser.delete();
   }
+
+  // 5. 로그인 정보 초기화
+  await AsyncStorage.clear();
+  setUser({ id: "로그인이 필요합니다.", nickname: "게스트" });
 };
