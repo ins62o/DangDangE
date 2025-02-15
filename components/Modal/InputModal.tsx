@@ -1,15 +1,18 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { colors, fonts } from "../../common";
-import Feather from "@expo/vector-icons/Feather";
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { colors, CommonStyle, fonts } from "../../common";
 import { StackParamList } from "../../types/stackType";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import { userData } from "../../Atoms/userData";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState } from "react";
 import { deleteUser } from "../../utils/firebase/deleteUser";
-import { Blood, userBloodData } from "../../Atoms/bloodData";
 import { homeData } from "../../Atoms/homeData";
 
 type ModalProps = {
@@ -19,56 +22,49 @@ type ModalProps = {
   mode: string;
 };
 
-export default function ChoiceModal({
-  setIsModal,
-  title,
-  info,
-  mode,
-}: ModalProps) {
+export default function InputModal({ setIsModal, title, info }: ModalProps) {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
   const setUser = useSetRecoilState(userData);
-  const setBlood = useSetRecoilState<Blood>(userBloodData);
   const setHome = useSetRecoilState(homeData);
-  const [text, setText] = useState(title);
+  const [infoText, setInfoText] = useState(info);
+  const [pw, setPw] = useState("");
 
-  // 로그아웃 : 사용자 Atom 변경, 모달 종료, AsyncStorage 값 제거, 홈 화면 전환
-  const handleLogout = async () => {
-    setUser({ id: "로그인이 필요합니다.", nickname: "게스트" });
-    await AsyncStorage.clear();
-    setHome({
-      markingData: {},
-      countDay: 0,
-      bloodAvg: 0,
-    });
-    setIsModal(false);
-    navigation.navigate("Home");
-  };
+  // 회원 탈퇴 : 회원 탈퇴 후 홈 화면 전환
+  const deleteAccount = async () => {
+    if (!pw) {
+      setInfoText("비밀번호를 입력해주세요.");
+      return;
+    }
 
-  // 목표치 설정 : 사용자 혈당 정보 입력 페이지로 전환
-  const goToGoalSetting = () => {
-    setBlood((prev) => ({ ...prev, time: [] }));
-    setIsModal(false);
-    navigation.navigate("BloodType");
-  };
-
-  // 모드별로 다르게 함수 실행
-  const handleModeAction = () => {
-    if (mode === "logout") handleLogout();
-    if (mode === "goal") goToGoalSetting();
+    try {
+      await deleteUser({ setInfoText, setUser, pw, setHome });
+      setIsModal(false);
+      navigation.navigate("Home");
+    } catch (err) {
+      console.error("회원 탈퇴 중 오류 발생", err);
+    }
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.modal}>
-        <View style={styles.iconContainer}>
-          <Feather name="alert-circle" size={50} color={colors.Nobel} />
+        <View style={styles.textContainer}>
+          <Text style={texts.title}>{title}</Text>
         </View>
         <View style={styles.textContainer}>
-          <Text style={texts.title}>{text}</Text>
+          <Text style={texts.info}>{infoText}</Text>
         </View>
-        <View style={styles.textContainer}>
-          <Text style={texts.info}>{info}</Text>
+
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={[CommonStyle.input, styles.input]}
+            secureTextEntry
+            placeholder="비밀번호를 입력하세요."
+            value={pw}
+            onChangeText={setPw}
+          />
         </View>
+
         <View style={styles.buttonContainer}>
           <TouchableOpacity
             style={styles.button}
@@ -78,7 +74,7 @@ export default function ChoiceModal({
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.button, styles.okbutton]}
-            onPress={handleModeAction}
+            onPress={deleteAccount}
           >
             <Text style={texts.ok}>확인</Text>
           </TouchableOpacity>
@@ -106,22 +102,23 @@ const styles = StyleSheet.create({
     height: "40%",
     backgroundColor: "#fff",
     borderRadius: 8,
+    padding: 20,
   },
 
-  iconContainer: {
+  inputContainer: {
     flex: 0.4,
     justifyContent: "center",
     alignItems: "center",
   },
 
   textContainer: {
-    flex: 0.1,
+    flex: 0.15,
     justifyContent: "center",
     alignItems: "center",
   },
 
   buttonContainer: {
-    flex: 0.4,
+    flex: 0.3,
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
@@ -139,6 +136,10 @@ const styles = StyleSheet.create({
   okbutton: {
     backgroundColor: colors.Main,
     marginLeft: 10,
+  },
+
+  input: {
+    backgroundColor: colors.WhiteSmoke,
   },
 });
 

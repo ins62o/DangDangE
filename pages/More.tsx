@@ -15,11 +15,13 @@ import { useNavigation } from "@react-navigation/native";
 import { StackParamList } from "../types/stackType";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import ChoiceModal from "../components/Modal/ChoiceModal";
+import InputModal from "../components/Modal/InputModal";
 
 export default function More() {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
   const user = useRecoilValue(userData);
   const [isModal, setIsModal] = useState(false);
+  const [isModalTwo, setIsModalTwo] = useState(false);
   const [title, setTitle] = useState("");
   const [info, setInfo] = useState("");
   const [mode, setMode] = useState("");
@@ -27,6 +29,13 @@ export default function More() {
 
   const configureModal = (title: string, info: string, mode: string) => {
     setIsModal(true);
+    setTitle(title);
+    setInfo(info);
+    setMode(mode);
+  };
+
+  const deleteModal = (title: string, info: string, mode: string) => {
+    setIsModalTwo(true);
     setTitle(title);
     setInfo(info);
     setMode(mode);
@@ -66,7 +75,7 @@ export default function More() {
           <TouchableOpacity
             style={styles.button}
             onPress={() =>
-              configureModal(
+              deleteModal(
                 "서비스를 탈퇴하시겠습니까?",
                 "모든 정보가 삭제되고 복구할 수 없습니다.",
                 "delete"
@@ -109,6 +118,15 @@ export default function More() {
           setIsModal={setIsModal}
           title={title}
           info={info}
+          mode={mode}
+        />
+      )}
+
+      {isModalTwo && (
+        <InputModal
+          setIsModal={setIsModalTwo}
+          info={info}
+          title={title}
           mode={mode}
         />
       )}
