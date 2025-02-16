@@ -40,10 +40,10 @@ export default function OneClickModal({
     <View style={styles.container}>
       <View style={styles.modal}>
         <View style={styles.iconContainer}>
-          {icon === "check" ? (
-            <AntDesign name="checkcircleo" size={50} color={colors.Main} />
+          {icon === "save" ? (
+            <AntDesign name="checkcircleo" size={40} color={colors.Main} />
           ) : (
-            <Feather name="alert-circle" size={50} color={colors.Nobel} />
+            <Feather name="alert-circle" size={40} color={colors.Nobel} />
           )}
         </View>
         <View style={styles.textContainer}>
@@ -115,6 +115,7 @@ const styles = StyleSheet.create({
 
   okbutton: {
     backgroundColor: colors.Main,
+    height: 40,
     marginLeft: 10,
   },
 });

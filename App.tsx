@@ -13,6 +13,7 @@ import { Text, TextInput } from "react-native";
 import { useEffect } from "react";
 import * as Font from "expo-font";
 import Main from "./pages/Main";
+import Tabs from "./components/Element/Tabs";
 
 interface TextWithDefaultProps extends Text {
   defaultProps?: { allowFontScaling?: boolean };
@@ -53,6 +54,7 @@ export default function App() {
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Main" component={Main} />
+          <Stack.Screen name="Tabs" component={Tabs} />
           <Stack.Screen name="LoginSignUp" component={LoginSignUp} />
           <Stack.Screen name="Welcome" component={Welcome} />
           <Stack.Screen name="BloodType" component={BloodType} />

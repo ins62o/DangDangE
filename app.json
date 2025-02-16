@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "DangDangE",
+    "name": "당당이",
     "slug": "DangDangE",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/image/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
@@ -18,10 +18,16 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/image/AppIcon.png"
-      }
+      },
+      "package": "com.jung_inseong.DangDangE"
     },
     "web": {
       "favicon": "./assets/image/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "e660952f-2e9f-40fd-94f7-629d00b72ad9"
+      }
     }
   }
 }
