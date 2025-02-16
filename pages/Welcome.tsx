@@ -5,6 +5,7 @@ import {
   Image,
   StyleSheet,
   TouchableOpacity,
+  Platform,
 } from "react-native";
 
 import { colors, CommonStyle, fonts } from "../common";
@@ -44,6 +45,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
+    paddingTop: Platform.OS === "ios" ? 0 : 30,
+    paddingBottom: Platform.OS === "ios" ? 0 : 60,
   },
   textContainer: {
     flex: 0.2,
@@ -62,7 +65,6 @@ const styles = StyleSheet.create({
   },
   custom: {
     width: "90%",
-    height: 50,
     backgroundColor: colors.Sub1,
   },
 });

@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { StyleSheet, View, SafeAreaView, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  View,
+  SafeAreaView,
+  TouchableOpacity,
+  Platform,
+} from "react-native";
 import { useSetRecoilState } from "recoil";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -68,7 +74,8 @@ export default function BloodType() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 30,
+    paddingTop: Platform.OS === "ios" ? 0 : 30,
+    paddingBottom: Platform.OS === "ios" ? 0 : 60,
   },
 
   contentContainer: {

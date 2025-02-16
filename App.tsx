@@ -1,7 +1,6 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { RecoilRoot } from "recoil";
-import Splash from "./pages/Splash";
 import Welcome from "./pages/Welcome";
 import BloodType from "./pages/BloodType";
 import BloodInfo from "./pages/BloodInfo";
@@ -9,11 +8,11 @@ import BloodGoal from "./pages/BloodGoal";
 import RecordBlood from "./pages/RecordBlood";
 import Home from "./pages/Home";
 import { StackParamList } from "./types/stackType";
-import Tabs from "./components/Element/Tabs";
 import LoginSignUp from "./pages/LoginSignUp";
 import { Text, TextInput } from "react-native";
 import { useEffect } from "react";
 import * as Font from "expo-font";
+import Main from "./pages/Main";
 
 interface TextWithDefaultProps extends Text {
   defaultProps?: { allowFontScaling?: boolean };
@@ -53,8 +52,7 @@ export default function App() {
     <RecoilRoot>
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="Splash" component={Splash} />
-          <Stack.Screen name="Tabs" component={Tabs} />
+          <Stack.Screen name="Main" component={Main} />
           <Stack.Screen name="LoginSignUp" component={LoginSignUp} />
           <Stack.Screen name="Welcome" component={Welcome} />
           <Stack.Screen name="BloodType" component={BloodType} />

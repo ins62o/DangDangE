@@ -5,6 +5,7 @@ import {
   StyleSheet,
   Pressable,
   TouchableOpacity,
+  Platform,
 } from "react-native";
 import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -160,7 +161,8 @@ export default function BloodInfo() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 30,
+    paddingTop: Platform.OS === "ios" ? 0 : 30,
+    paddingBottom: Platform.OS === "ios" ? 0 : 60,
   },
   BloodTypeBox: {
     flex: 0.8,

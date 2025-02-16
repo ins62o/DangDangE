@@ -5,6 +5,7 @@ import {
   ScrollView,
   TouchableOpacity,
   KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { useState } from "react";
 import { colors, CommonStyle, fonts, MyText } from "../common";
@@ -103,7 +104,8 @@ export default function BloodGoal() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 30,
+    paddingTop: Platform.OS === "ios" ? 0 : 30,
+    paddingBottom: Platform.OS === "ios" ? 0 : 60,
   },
   BloodContainer: {
     flex: 0.9,

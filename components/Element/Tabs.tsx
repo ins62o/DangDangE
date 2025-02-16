@@ -19,7 +19,7 @@ export default function Tabs() {
           <TouchableOpacity {...props} activeOpacity={1} />
         ),
         tabBarStyle: {
-          height: Platform.OS === "ios" ? 83 : 100,
+          height: Platform.OS === "ios" ? 83 : 55,
         },
       }}
     >

@@ -22,24 +22,22 @@ export default function Splash() {
       const user = await getUser();
 
       // 2. 2초라는 시간 동안 Recoil에 유저 데이터를 넣음
-      setTimeout(() => {
-        if (user) {
-          setData((prev) => ({
-            ...prev,
-            id: user.id,
-            nickname: user.nickname,
-          }));
-        }
+      if (user) {
+        setData((prev) => ({
+          ...prev,
+          id: user.id,
+          nickname: user.nickname,
+        }));
+      }
 
-        // 3. 조건에 따라 페이지 전환
-        if (!user) {
-          navigation.navigate("Tabs");
-        } else if (!user.type) {
-          navigation.navigate("Welcome");
-        } else {
-          navigation.navigate("Tabs");
-        }
-      }, 2000);
+      // 3. 조건에 따라 페이지 전환
+      if (!user) {
+        navigation.navigate("Main");
+      } else if (!user.type) {
+        navigation.navigate("Welcome");
+      } else {
+        navigation.navigate("Main");
+      }
     };
 
     getFetchUser();
