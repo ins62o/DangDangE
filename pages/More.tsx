@@ -9,7 +9,7 @@ import { colors, fonts, MyText } from "../common";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Feather from "@expo/vector-icons/Feather";
 import { useRecoilValue } from "recoil";
-import { userData } from "../Atoms/userData";
+import { userData } from "../atoms/userData";
 import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { StackParamList } from "../types/stackType";

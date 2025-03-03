@@ -8,9 +8,9 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../../firebaseConfig";
 import { SetterOrUpdater } from "recoil";
-import { User } from "../../Atoms/userData";
+import { User } from "../../atoms/userData";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { homeType } from "../../Atoms/homeData";
+import { homeType } from "../../atoms/homeData";
 
 type deleteProps = {
   setInfoText: React.Dispatch<React.SetStateAction<string>>;

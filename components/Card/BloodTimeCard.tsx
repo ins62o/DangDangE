@@ -1,7 +1,7 @@
 import { Pressable, StyleSheet } from "react-native";
 import { colors, fonts, MyText } from "../../common";
 import { useRecoilState } from "recoil";
-import { Blood, userBloodData } from "../../Atoms/bloodData";
+import { Blood, userBloodData } from "../../atoms/bloodData";
 import { times } from "../../InitialData";
 
 type TimeButtonProps = {

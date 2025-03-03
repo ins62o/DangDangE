@@ -2,7 +2,7 @@ import Logo from "../assets/image/Logo.png";
 import { useEffect } from "react";
 import { StyleSheet, Animated, useWindowDimensions, View } from "react-native";
 import { useSetRecoilState } from "recoil";
-import { User, userData } from "../Atoms/userData";
+import { User, userData } from "../atoms/userData";
 import { StatusBar } from "expo-status-bar";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";

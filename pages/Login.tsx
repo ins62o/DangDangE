@@ -12,7 +12,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useUserData } from "../hooks/useUserData";
 import { useSetRecoilState } from "recoil";
-import { User, userData } from "../Atoms/userData";
+import { User, userData } from "../atoms/userData";
 import { FIREBASE_AUTH } from "../firebaseConfig";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "../types/stackType";

@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { fonts, MyText } from "../../common";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 

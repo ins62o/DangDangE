@@ -4,13 +4,12 @@ import Feather from "@expo/vector-icons/Feather";
 import { StackParamList } from "../../types/stackType";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import { userData } from "../../Atoms/userData";
+import { useSetRecoilState } from "recoil";
+import { userData } from "../../atoms/userData";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState } from "react";
-import { deleteUser } from "../../utils/firebase/deleteUser";
-import { Blood, userBloodData } from "../../Atoms/bloodData";
-import { homeData } from "../../Atoms/homeData";
+import { Blood, userBloodData } from "../../atoms/bloodData";
+import { homeData } from "../../atoms/homeData";
 
 type ModalProps = {
   setIsModal: React.Dispatch<React.SetStateAction<boolean>>;

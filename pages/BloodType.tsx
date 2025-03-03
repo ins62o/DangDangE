@@ -11,7 +11,7 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { colors, CommonStyle, fonts, MyText } from "../common";
 import { BloodData } from "../InitialData";
-import { Blood, userBloodData } from "../Atoms/bloodData";
+import { Blood, userBloodData } from "../atoms/bloodData";
 import { StackParamList } from "../types/stackType";
 import BloodHeader from "../components/Element/BloodHeader";
 import BloodTypeCard from "../components/Card/BloodTypeCard";

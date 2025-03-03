@@ -1,27 +1,16 @@
-import React, { memo, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import { colors, fonts, MyText } from "../common";
+import { colors, fonts } from "../common";
 import BloodCard from "../components/Card/BloodCard";
 import TextCard from "../components/Card/TextCard";
 import { RouteProp, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "../types/stackType";
-import { useUserData } from "../hooks/useUserData";
 import { userType } from "../types/userType";
 import KeyboardModal from "../components/Modal/KeyboardModal";
 import MemoModal from "../components/Modal/MemoModal";
-import {
-  addDoc,
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  setDoc,
-  updateDoc,
-  where,
-} from "firebase/firestore";
+import { addDoc, collection } from "firebase/firestore";
 import { FIRESTORE_DB } from "../firebaseConfig";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import SkBloodCard from "../skeleton/skBloodCard";

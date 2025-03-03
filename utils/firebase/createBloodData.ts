@@ -7,7 +7,7 @@ import {
   where,
 } from "firebase/firestore";
 import { FIRESTORE_DB } from "../../firebaseConfig";
-import { Blood } from "../../Atoms/bloodData";
+import { Blood } from "../../atoms/bloodData";
 
 export const createBloodData = async (id: string, data: Blood) => {
   const q = query(collection(FIRESTORE_DB, "users"), where("id", "==", id));

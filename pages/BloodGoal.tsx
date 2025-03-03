@@ -16,8 +16,8 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "../types/stackType";
 import { useRecoilValue } from "recoil";
-import { Blood, userBloodData } from "../Atoms/bloodData";
-import { User, userData } from "../Atoms/userData";
+import { Blood, userBloodData } from "../atoms/bloodData";
+import { User, userData } from "../atoms/userData";
 import { createBloodData } from "../utils/firebase/createBloodData";
 
 export default function BloodGoal() {

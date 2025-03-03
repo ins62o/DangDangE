@@ -1,9 +1,6 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { colors, fonts, MyText } from "../../common";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
-import { useEffect, useState } from "react";
-import { userType } from "../../types/userType";
-import { useUserData } from "../../hooks/useUserData";
 
 type BloodProps = {
   setIsModal: React.Dispatch<React.SetStateAction<boolean>>;

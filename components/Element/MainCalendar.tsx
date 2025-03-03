@@ -6,7 +6,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "../../types/stackType";
 import { dateType } from "../../types/dateType";
 import { useRecoilState } from "recoil";
-import { homeData, MarkedDate } from "../../Atoms/homeData";
+import { homeData, MarkedDate } from "../../atoms/homeData";
 import { getBloodData } from "../../utils/firebase/getBloodData";
 import { getTodayDate } from "../../utils/dateFn";
 import AsyncStorage from "@react-native-async-storage/async-storage";

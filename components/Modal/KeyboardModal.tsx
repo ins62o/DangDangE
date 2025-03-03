@@ -10,7 +10,7 @@ import { useState } from "react";
 import { colors, CommonStyle, fonts, MyText } from "../../common";
 import Keyboard from "../Element/Keyboard";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
-import { Blood, userBloodData } from "../../Atoms/bloodData";
+import { Blood, userBloodData } from "../../atoms/bloodData";
 import { useSetRecoilState } from "recoil";
 import { BloodData } from "../../pages/RecordBlood";
 import { userType } from "../../types/userType";
@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
   custombutton: {
     width: "90%",
     height: 50,
-    backgroundColor: colors.Main,
+    backgroundColor: colors.Sub1,
   },
 
   numberContainer: {

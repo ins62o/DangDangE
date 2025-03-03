@@ -1,6 +1,5 @@
 import {
   View,
-  SafeAreaView,
   StyleSheet,
   TouchableOpacity,
   Platform,
@@ -10,13 +9,13 @@ import MainCalendar from "../components/Element/MainCalendar";
 import { colors, fonts, MyText } from "../common";
 import { StatusBar } from "expo-status-bar";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { userData } from "../Atoms/userData";
+import { userData } from "../atoms/userData";
 import { motivationalMessages } from "../InitialData";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "../types/stackType";
 import { useEffect, useState } from "react";
-import { homeData } from "../Atoms/homeData";
+import { homeData } from "../atoms/homeData";
 import { getHbA1c } from "../utils/firebase/getHbA1c";
 import { getTodayDate } from "../utils/dateFn";
 import { countDate } from "../utils/firebase/countDate";

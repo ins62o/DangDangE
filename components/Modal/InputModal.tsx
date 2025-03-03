@@ -10,10 +10,10 @@ import { StackParamList } from "../../types/stackType";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 import { useSetRecoilState } from "recoil";
-import { userData } from "../../Atoms/userData";
+import { userData } from "../../atoms/userData";
 import { useState } from "react";
 import { deleteUser } from "../../utils/firebase/deleteUser";
-import { homeData } from "../../Atoms/homeData";
+import { homeData } from "../../atoms/homeData";
 
 type ModalProps = {
   setIsModal: React.Dispatch<React.SetStateAction<boolean>>;

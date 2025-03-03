@@ -14,7 +14,7 @@ import { colors, CommonStyle, fonts, MyText } from "../common";
 import BloodTimeCard from "../components/Card/BloodTimeCard";
 import BloodHeader from "../components/Element/BloodHeader";
 import { StackParamList } from "../types/stackType";
-import { Blood, userBloodData } from "../Atoms/bloodData";
+import { Blood, userBloodData } from "../atoms/bloodData";
 import { useRecoilState } from "recoil";
 import { times } from "../InitialData";
 
