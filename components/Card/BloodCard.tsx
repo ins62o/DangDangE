@@ -1,28 +1,29 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { colors, fonts, MyText } from "../../common";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+import { useSetRecoilState } from "recoil";
+import { keyboardData } from "../../atoms/keyboardData";
 
 type BloodProps = {
   setIsModal: React.Dispatch<React.SetStateAction<boolean>>;
-  setTitle: React.Dispatch<React.SetStateAction<string>>;
-  title: string;
   bloodData?: string;
   blood?: string;
   text: string;
   color: string;
+  title: string;
 };
 
 export default function BloodCard({
-  title,
   blood,
   setIsModal,
-  setTitle,
   text,
   color,
+  title,
 }: BloodProps) {
+  const setKoardData = useSetRecoilState(keyboardData);
   const handleClick = () => {
     setIsModal(true);
-    setTitle(title);
+    setKoardData((prev) => ({ ...prev, title }));
   };
 
   return (
@@ -35,7 +36,7 @@ export default function BloodCard({
       </View>
       <View style={styles.iconContainer}>
         <View style={styles.blood}>
-          <MyText style={texts.blood}>{blood ?? 0}</MyText>
+          <MyText style={texts.blood}>{blood}</MyText>
           <FontAwesome5 name="plus" size={24} color="black" />
         </View>
       </View>

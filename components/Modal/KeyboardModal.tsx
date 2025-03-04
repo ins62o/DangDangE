@@ -11,16 +11,16 @@ import { colors, CommonStyle, fonts, MyText } from "../../common";
 import Keyboard from "../Element/Keyboard";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { Blood, userBloodData } from "../../atoms/bloodData";
-import { useSetRecoilState } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { BloodData } from "../../pages/RecordBlood";
 import { userType } from "../../types/userType";
 import { getWeek } from "../../utils/dateFn";
 import { useSlideAni } from "../../hooks/animation/useSlideAni";
+import { keyboardData } from "../../atoms/keyboardData";
 
 type keyboardProps = {
   setIsModal: React.Dispatch<React.SetStateAction<boolean>>;
   setBloodData?: React.Dispatch<React.SetStateAction<BloodData | null>>;
-  title?: string;
   type?: string;
   mode?: string;
   userData?: userType | null;
@@ -29,12 +29,12 @@ type keyboardProps = {
 export default function KeyboardModal({
   setIsModal,
   setBloodData,
-  title,
   type,
   mode,
   userData,
 }: keyboardProps) {
   const setBlood = useSetRecoilState<Blood>(userBloodData);
+  const titleData = useRecoilValue(keyboardData);
   const { slide, slideTo } = useSlideAni();
   const [text, setText] = useState("0");
   const slideDown = () => slideTo(600);
@@ -65,10 +65,10 @@ export default function KeyboardModal({
       ...prev,
       goal: {
         ...prev.goal,
-        [title as string]:
+        [titleData.title as string]:
           type === "min"
-            ? [+text, prev.goal[title as string][1]]
-            : [prev.goal[title as string][0], +text],
+            ? [+text, prev.goal[titleData.title as string][1]]
+            : [prev.goal[titleData.title as string][0], +text],
       },
     }));
 
@@ -77,7 +77,7 @@ export default function KeyboardModal({
 
   // 혈당 데이터 저장
   const SaveBloodData = async () => {
-    if (typeof title !== "string") return;
+    if (typeof titleData.title !== "string") return;
 
     // 1. 몇 주차인지 구하기
     const week = String(getWeek(new Date()));
@@ -92,14 +92,14 @@ export default function KeyboardModal({
             timesArray.map((time) => [time, "0"])
           );
           return {
-            blood: { ...initialBlood, [title]: text },
+            blood: { ...initialBlood, [titleData.title]: text },
             memo: prev?.memo ?? "",
             week,
           };
         }
 
         return {
-          blood: { ...prev.blood, [title]: text },
+          blood: { ...prev.blood, [titleData.title]: text },
           memo: prev.memo ?? "",
           week: prev.week ?? week,
         };

@@ -42,19 +42,14 @@ type UserBlood = {
 
 export default function RecordBlood({ route }: RecordBloodProps) {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
+  const [userData, setUserData] = useState<userType | null>(null); // 유저의 기본 데이터
+  const [bloodData, setBloodData] = useState<BloodData | null>(null); // 해당 날짜의 혈당 데이터
   const setModal = useSetRecoilState(ModalData);
-  const [userData, setUserData] = useState<userType | null>(null);
-  const [bloodData, setBloodData] = useState<BloodData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isModal, setIsModal] = useState(false);
   const [isOneModal, setIsOneModal] = useState(false);
   const [isMemo, setIsMemo] = useState(false);
   const [text, setText] = useState<string>("");
-  const [title, setTitle] = useState("");
-  const [info, setInfo] = useState("");
-  const date = new Date();
-  const today = date.getDate();
-  const month = date.getMonth() + 1;
   const day = route.params?.day;
   const bloodKeys = bloodData
     ? Object.keys(bloodData.blood)
@@ -152,10 +147,8 @@ export default function RecordBlood({ route }: RecordBloodProps) {
               <View style={styles.calendarHole}></View>
             </View>
             <View style={styles.monthContainer}>
-              <Text style={texts.month}>
-                {day?.month ? day?.month : month}월
-              </Text>
-              <Text style={texts.day}>{day?.day ? day?.day : today}일</Text>
+              <Text style={texts.month}>{day?.month}월</Text>
+              <Text style={texts.day}>{day?.day}일</Text>
             </View>
           </View>
         </View>
@@ -193,7 +186,6 @@ export default function RecordBlood({ route }: RecordBloodProps) {
                     title={title}
                     blood={bloodData?.blood?.[title] || "0"}
                     setIsModal={setIsModal}
-                    setTitle={setTitle}
                     text={text}
                     color={color}
                   />
@@ -212,7 +204,6 @@ export default function RecordBlood({ route }: RecordBloodProps) {
           setIsModal={setIsModal}
           setBloodData={setBloodData}
           mode="blood"
-          title={title}
           userData={userData}
         />
       )}
