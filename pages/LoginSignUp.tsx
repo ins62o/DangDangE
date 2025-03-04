@@ -2,18 +2,17 @@ import React, { useState } from "react";
 import { Image, SafeAreaView, StyleSheet, View } from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { colors } from "../common";
-import Login from "./Login";
-import SignUp from "./SignUp";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "../types/stackType";
+import Login from "./Login";
+import SignUp from "./SignUp";
 import OneClickModal from "../components/Modal/OneClickModal";
 
 export default function LoginSignUp() {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
   const [mode, setMode] = useState(false);
-  const [isModal, setIsModal] = useState(false);
-  const [title, setTitle] = useState("");
+  const [isOneModal, setIsOneModal] = useState(false);
 
   const goback = () => {
     mode === false ? navigation.goBack() : setMode(false);
@@ -31,26 +30,12 @@ export default function LoginSignUp() {
           />
         </View>
         {mode ? (
-          <SignUp
-            setMode={setMode}
-            setIsModal={setIsModal}
-            setTitle={setTitle}
-          />
+          <SignUp setMode={setMode} setIsOneModal={setIsOneModal} />
         ) : (
-          <Login
-            setMode={setMode}
-            setIsModal={setIsModal}
-            setTitle={setTitle}
-          />
+          <Login setMode={setMode} setIsOneModal={setIsOneModal} />
         )}
       </SafeAreaView>
-      {isModal && (
-        <OneClickModal
-          setIsModal={setIsModal}
-          title={title}
-          mode="LoginSignUp"
-        />
-      )}
+      {isOneModal && <OneClickModal setIsOneModal={setIsOneModal} />}
     </>
   );
 }

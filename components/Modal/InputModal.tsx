@@ -9,35 +9,33 @@ import { colors, CommonStyle, fonts } from "../../common";
 import { StackParamList } from "../../types/stackType";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { userData } from "../../atoms/userData";
 import { useState } from "react";
 import { deleteUser } from "../../utils/firebase/deleteUser";
 import { homeData } from "../../atoms/homeData";
+import { ModalData } from "../../atoms/modalData";
 
 type ModalProps = {
   setIsModal: React.Dispatch<React.SetStateAction<boolean>>;
-  title: string;
-  info: string;
-  mode: string;
 };
 
-export default function InputModal({ setIsModal, title, info }: ModalProps) {
+export default function InputModal({ setIsModal }: ModalProps) {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
   const setUser = useSetRecoilState(userData);
   const setHome = useSetRecoilState(homeData);
-  const [infoText, setInfoText] = useState(info);
   const [pw, setPw] = useState("");
+  const [modalData, setModalData] = useRecoilState(ModalData);
+  const { info, title } = modalData;
 
   // 회원 탈퇴 : 회원 탈퇴 후 홈 화면 전환
   const deleteAccount = async () => {
     if (!pw) {
-      setInfoText("비밀번호를 입력해주세요.");
+      setModalData((prev) => ({ ...prev, info: "비밀번호를 입력해주세요." }));
       return;
     }
-
     try {
-      await deleteUser({ setInfoText, setUser, pw, setHome });
+      await deleteUser({ setModalData, setUser, pw, setHome });
       setIsModal(false);
       navigation.navigate("Home");
     } catch (err) {
@@ -52,7 +50,7 @@ export default function InputModal({ setIsModal, title, info }: ModalProps) {
           <Text style={texts.title}>{title}</Text>
         </View>
         <View style={styles.textContainer}>
-          <Text style={texts.info}>{infoText}</Text>
+          <Text style={texts.info}>{info}</Text>
         </View>
 
         <View style={styles.inputContainer}>

@@ -2,50 +2,27 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { colors, fonts } from "../../common";
 import Feather from "@expo/vector-icons/Feather";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { StackParamList } from "../../types/stackType";
+import { useRecoilValue } from "recoil";
+import { ModalData } from "../../atoms/modalData";
 
 type Modal = {
-  setIsModal?: React.Dispatch<React.SetStateAction<boolean>>;
-  title: string;
-  mode: string;
-  icon?: string;
+  setIsOneModal: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export default function OneClickModal({
-  setIsModal,
-  title,
-  mode,
-  icon,
-}: Modal) {
-  const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
+export default function OneClickModal({ setIsOneModal }: Modal) {
+  const modalData = useRecoilValue(ModalData);
+  const { icon, title, action } = modalData;
+  const mode =
+    icon === "warning" ? (
+      <Feather name="alert-circle" size={40} color={colors.Nobel} />
+    ) : (
+      <AntDesign name="checkcircleo" size={40} color={colors.Main} />
+    );
 
-  const handleModal = () => {
-    if (mode === "guest" && setIsModal) {
-      setIsModal(false);
-      navigation.navigate("LoginSignUp");
-    }
-
-    if (mode === "LoginSignUp" && setIsModal) {
-      setIsModal(false);
-    }
-
-    if (mode === "save" && setIsModal) {
-      setIsModal(false);
-      navigation.navigate("Tabs");
-    }
-  };
   return (
     <View style={styles.container}>
       <View style={styles.modal}>
-        <View style={styles.iconContainer}>
-          {icon === "save" ? (
-            <AntDesign name="checkcircleo" size={40} color={colors.Main} />
-          ) : (
-            <Feather name="alert-circle" size={40} color={colors.Nobel} />
-          )}
-        </View>
+        <View style={styles.iconContainer}>{mode}</View>
         <View style={styles.textContainer}>
           <Text style={texts.title}>{title}</Text>
         </View>
@@ -53,7 +30,7 @@ export default function OneClickModal({
         <View style={styles.buttonContainer}>
           <TouchableOpacity
             style={[styles.button, styles.okbutton]}
-            onPress={handleModal}
+            onPress={() => action?.()}
           >
             <Text style={texts.ok}>확인</Text>
           </TouchableOpacity>
@@ -115,7 +92,7 @@ const styles = StyleSheet.create({
 
   okbutton: {
     backgroundColor: colors.Main,
-    height: 40,
+    height: 50,
     marginLeft: 10,
   },
 });

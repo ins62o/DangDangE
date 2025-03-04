@@ -11,16 +11,17 @@ import { SetterOrUpdater } from "recoil";
 import { User } from "../../atoms/userData";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { homeType } from "../../atoms/homeData";
+import { ChoiceDataType } from "../../atoms/modalData";
 
 type deleteProps = {
-  setInfoText: React.Dispatch<React.SetStateAction<string>>;
+  setModalData: SetterOrUpdater<ChoiceDataType>;
   setUser: SetterOrUpdater<User>;
   setHome: SetterOrUpdater<homeType>;
   pw: string;
 };
 
 export const deleteUser = async ({
-  setInfoText,
+  setModalData,
   setUser,
   pw,
   setHome,
@@ -30,13 +31,19 @@ export const deleteUser = async ({
   if (!id) return;
 
   // 1. Modal Text 변경
-  setInfoText("사용자 정보를 삭제하고 있습니다.");
+  setModalData((prev) => ({
+    ...prev,
+    info: "사용자 정보를 삭제하고 있습니다.",
+  }));
 
   // 2. pw를 가지고 사용자 로그인 → Fireuser를 다시 호출하기 위함
   try {
     await signInWithEmailAndPassword(auth, id, pw);
   } catch (err) {
-    setInfoText("비밀번호가 일치하지 않습니다.");
+    setModalData((prev) => ({
+      ...prev,
+      info: "비밀번호가 일치하지 않습니다.",
+    }));
     return;
   }
 
@@ -46,7 +53,10 @@ export const deleteUser = async ({
   const userSnapshot = await getDocs(userQuery);
   await Promise.all(userSnapshot.docs.map((doc) => deleteDoc(doc.ref)));
 
-  setInfoText("사용자 정보를 삭제하고 있습니다..");
+  setModalData((prev) => ({
+    ...prev,
+    info: "사용자 정보를 삭제하고 있습니다..",
+  }));
 
   // 3. Firebase "blood" 컬렉션에서 id가 같은 문서를 찾음
   const bloodRef = collection(FIRESTORE_DB, "blood");
@@ -54,7 +64,10 @@ export const deleteUser = async ({
   const bloodSnapshot = await getDocs(bloodQuery);
   await Promise.all(bloodSnapshot.docs.map((doc) => deleteDoc(doc.ref)));
 
-  setInfoText("사용자 정보를 삭제하고 있습니다...");
+  setModalData((prev) => ({
+    ...prev,
+    info: "사용자 정보를 삭제하고 있습니다...",
+  }));
 
   // 4. 현재 로그인 하고 있는 유저 삭제
   const Fireuser = FIREBASE_AUTH.currentUser;

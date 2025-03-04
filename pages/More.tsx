@@ -8,40 +8,82 @@ import {
 import { colors, fonts, MyText } from "../common";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Feather from "@expo/vector-icons/Feather";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { userData } from "../atoms/userData";
 import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { StackParamList } from "../types/stackType";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { ModalData } from "../atoms/modalData";
 import ChoiceModal from "../components/Modal/ChoiceModal";
 import InputModal from "../components/Modal/InputModal";
+import { homeData } from "../atoms/homeData";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function More() {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
   const user = useRecoilValue(userData);
-  const [isModal, setIsModal] = useState(false);
-  const [isModalTwo, setIsModalTwo] = useState(false);
-  const [title, setTitle] = useState("");
-  const [info, setInfo] = useState("");
-  const [mode, setMode] = useState("");
   const ischecked = user.nickname === "게스트";
+  const [choiceModal, setChoiceModal] = useState(false);
+  const [inputModal, setInputModal] = useState(false);
+  const setModal = useSetRecoilState(ModalData);
+  const setUser = useSetRecoilState(userData);
+  const setHome = useSetRecoilState(homeData);
 
-  const configureModal = (title: string, info: string, mode: string) => {
-    setIsModal(true);
-    setTitle(title);
-    setInfo(info);
-    setMode(mode);
+  // 목표치 설정
+  const handleGoal = () => {
+    setModal((prev) => ({
+      ...prev,
+      icon: "warning",
+      title: "혈당 목표치와 시간을 변경하시겠습니까?",
+      info: "기존에 설정한 내용은 사라집니다.",
+      action: () => {
+        navigation.navigate("BloodType"), setChoiceModal(false);
+      },
+    }));
+    setChoiceModal(true);
   };
 
-  const deleteModal = (title: string, info: string, mode: string) => {
-    setIsModalTwo(true);
-    setTitle(title);
-    setInfo(info);
-    setMode(mode);
+  // 회원 탈퇴
+  const deleteUser = () => {
+    setModal((prev) => ({
+      ...prev,
+      title: "서비스를 탈퇴하시겠습니까?",
+      info: "모든 정보가 삭제되고 복구할 수 없습니다.",
+    }));
+    setInputModal(true);
   };
 
-  const login = () => navigation.navigate("LoginSignUp");
+  // 로그인
+  const handleLogin = () => navigation.navigate("LoginSignUp");
+
+  // 로그아웃
+  const handleLogout = () => {
+    setChoiceModal(true);
+
+    const logoutAction = async () => {
+      setUser({ id: "로그인이 필요합니다.", nickname: "게스트" });
+
+      setHome({
+        markingData: {},
+        countDay: 0,
+        bloodAvg: 0,
+      });
+
+      await AsyncStorage.clear();
+
+      setChoiceModal(false);
+      navigation.navigate("Home");
+    };
+
+    setModal((prev) => ({
+      ...prev,
+      icon: "warning",
+      title: "로그아웃 하시겠습니까?",
+      info: "로그아웃 시 재 로그인이 필요합니다.",
+      action: logoutAction,
+    }));
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -53,14 +95,8 @@ export default function More() {
         <View style={styles.menu}>
           <TouchableOpacity
             style={styles.button}
-            onPress={() =>
-              configureModal(
-                "혈당 목표치와 시간을 변경하시겠습니까?",
-                "기존에 설정한 내용은 사라집니다.",
-                "goal"
-              )
-            }
             disabled={ischecked}
+            onPress={handleGoal}
           >
             <Feather
               name="settings"
@@ -74,14 +110,8 @@ export default function More() {
 
           <TouchableOpacity
             style={styles.button}
-            onPress={() =>
-              deleteModal(
-                "서비스를 탈퇴하시겠습니까?",
-                "모든 정보가 삭제되고 복구할 수 없습니다.",
-                "delete"
-              )
-            }
             disabled={ischecked}
+            onPress={deleteUser}
           >
             <AntDesign
               name="deleteuser"
@@ -95,16 +125,7 @@ export default function More() {
 
           <TouchableOpacity
             style={styles.button}
-            onPress={
-              ischecked
-                ? login
-                : () =>
-                    configureModal(
-                      "로그아웃하시겠습니까?",
-                      "로그아웃 시 재 로그인이 필요합니다.",
-                      "logout"
-                    )
-            }
+            onPress={ischecked ? handleLogin : handleLogout}
           >
             <AntDesign name="logout" size={20} color="orange" />
             <MyText style={texts.menu}>
@@ -113,23 +134,9 @@ export default function More() {
           </TouchableOpacity>
         </View>
       </View>
-      {isModal && (
-        <ChoiceModal
-          setIsModal={setIsModal}
-          title={title}
-          info={info}
-          mode={mode}
-        />
-      )}
+      {choiceModal && <ChoiceModal setChoiceModal={setChoiceModal} />}
 
-      {isModalTwo && (
-        <InputModal
-          setIsModal={setIsModalTwo}
-          info={info}
-          title={title}
-          mode={mode}
-        />
-      )}
+      {inputModal && <InputModal setIsModal={setInputModal} />}
     </SafeAreaView>
   );
 }

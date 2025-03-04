@@ -8,7 +8,7 @@ import {
 import MainCalendar from "../components/Element/MainCalendar";
 import { colors, fonts, MyText } from "../common";
 import { StatusBar } from "expo-status-bar";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { userData } from "../atoms/userData";
 import { motivationalMessages } from "../InitialData";
 import { useNavigation } from "@react-navigation/native";
@@ -23,10 +23,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import InfoModal from "../components/Modal/InfoModal";
 import OneClickModal from "../components/Modal/OneClickModal";
+import { ModalData } from "../atoms/modalData";
 
 export default function Home() {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
   const user = useRecoilValue(userData);
+  const setModal = useSetRecoilState(ModalData);
   const [home, setHome] = useRecoilState(homeData);
   const [isModal, setIsModal] = useState(false);
   const [isOneModal, setIsOneModal] = useState(false);
@@ -58,6 +60,12 @@ export default function Home() {
   const checkGuestAccess = () => {
     if (user.nickname === "게스트") {
       setIsOneModal(true);
+      setModal((prev) => ({
+        ...prev,
+        icon: "warning",
+        title: "로그인이 필요합니다.",
+        action: () => setIsOneModal(false),
+      }));
     } else {
       navigation.navigate("RecordBlood", { day });
     }
@@ -109,13 +117,7 @@ export default function Home() {
         </View>
       </View>
       {isModal && <InfoModal setIsModal={setIsModal} />}
-      {isOneModal && (
-        <OneClickModal
-          setIsModal={setIsOneModal}
-          mode="guest"
-          title="로그인이 필요합니다."
-        />
-      )}
+      {isOneModal && <OneClickModal setIsOneModal={setIsOneModal} />}
       <StatusBar style="dark" />
     </View>
   );

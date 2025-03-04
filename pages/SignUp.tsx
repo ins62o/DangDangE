@@ -11,14 +11,16 @@ import { colors, CommonStyle, fonts, MyText } from "../common";
 import { isNicknameTaken } from "../utils/SignUp/isNicknameTaken";
 import { createUser } from "../utils/SignUp/createUser";
 import { isEmailTaken } from "../utils/SignUp/isEmailTaken";
+import { ModalData } from "../atoms/modalData";
+import { useSetRecoilState } from "recoil";
 
 type SignProps = {
   setMode: React.Dispatch<React.SetStateAction<boolean>>; // 로그인 or 회원가입
-  setIsModal: React.Dispatch<React.SetStateAction<boolean>>; // 모달 OPEN or CLOSE
-  setTitle: React.Dispatch<React.SetStateAction<string>>; // 모달 경고문
+  setIsOneModal: React.Dispatch<React.SetStateAction<boolean>>; // 모달 OPEN or CLOSE
 };
 
-export default function SignUp({ setMode, setIsModal, setTitle }: SignProps) {
+export default function SignUp({ setMode, setIsOneModal }: SignProps) {
+  const setModal = useSetRecoilState(ModalData);
   const [loading, setLoading] = useState(false);
   const [nickname, setNickname] = useState("");
   const [id, setId] = useState("");
@@ -28,8 +30,13 @@ export default function SignUp({ setMode, setIsModal, setTitle }: SignProps) {
     // 1. 키보드 내리고 회원가입 폼 입력여부 검사 시작 (닉네임, 아이디, 비밀번호)
     Keyboard.dismiss();
     if (nickname.length === 0) {
-      setIsModal(true);
-      setTitle("닉네임을 입력해주세요.");
+      setIsOneModal(true);
+      setModal((prev) => ({
+        ...prev,
+        icon: "warning",
+        title: "닉네임을 입력해주세요.",
+        action: () => setIsOneModal(false),
+      }));
       return;
     }
 
@@ -37,14 +44,24 @@ export default function SignUp({ setMode, setIsModal, setTitle }: SignProps) {
     const isChecked = !IdRegex.test(id);
 
     if (pw.length === 0 && isChecked) {
-      setIsModal(true);
-      setTitle("이메일 형식에 맞게 입력해주세요.");
+      setIsOneModal(true);
+      setModal((prev) => ({
+        ...prev,
+        icon: "warning",
+        title: "이메일 형식에 맞게 입력해주세요.",
+        action: () => setIsOneModal(false),
+      }));
       return;
     }
 
     if (pw.length < 6) {
-      setIsModal(true);
-      setTitle("비밀번호를 6자 이상 입력해주세요.");
+      setIsOneModal(true);
+      setModal((prev) => ({
+        ...prev,
+        icon: "warning",
+        title: "비밀번호를 6자 이상 입력해주세요.",
+        action: () => setIsOneModal(false),
+      }));
       return;
     }
 
@@ -54,14 +71,24 @@ export default function SignUp({ setMode, setIsModal, setTitle }: SignProps) {
     // 3. 유저 테이블에 중복된 닉네임과 아이디가 존재하는지 확인
     try {
       if (await isNicknameTaken(nickname)) {
-        setIsModal(true);
+        setIsOneModal(true);
         setLoading(false);
-        setTitle("중복된 닉네임이 있습니다.");
+        setModal((prev) => ({
+          ...prev,
+          icon: "warning",
+          title: "중복된 닉네임이 있습니다.",
+          action: () => setIsOneModal(false),
+        }));
         return;
       } else if (await isEmailTaken(id)) {
-        setIsModal(true);
+        setIsOneModal(true);
         setLoading(false);
-        setTitle("가입된 아이디가 존재합니다.");
+        setModal((prev) => ({
+          ...prev,
+          icon: "warning",
+          title: "가입된 아이디가 존재합니다.",
+          action: () => setIsOneModal(false),
+        }));
         return;
       } else {
         // 4. 모든 유효성 검사에 통과했다면 신규 회원의 유저 테이블 생성
@@ -69,8 +96,13 @@ export default function SignUp({ setMode, setIsModal, setTitle }: SignProps) {
         setMode(false);
       }
     } catch (err) {
-      setTitle("회원가입에 실패했습니다.");
-      setIsModal(true);
+      setModal((prev) => ({
+        ...prev,
+        icon: "warning",
+        title: "회원가입에 실패했습니다.",
+        action: () => setIsOneModal(false),
+      }));
+      setIsOneModal(true);
       setLoading(false);
     }
   };

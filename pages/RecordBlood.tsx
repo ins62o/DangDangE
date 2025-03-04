@@ -21,6 +21,8 @@ import { getBloodData } from "../utils/firebase/getBloodData";
 import OneClickModal from "../components/Modal/OneClickModal";
 import { updateBlood } from "../utils/firebase/updateBlood";
 import { getTodayDate } from "../utils/dateFn";
+import { useSetRecoilState } from "recoil";
+import { ModalData } from "../atoms/modalData";
 
 type RecordBloodProps = {
   route: RouteProp<StackParamList, "RecordBlood">;
@@ -40,6 +42,7 @@ type UserBlood = {
 
 export default function RecordBlood({ route }: RecordBloodProps) {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
+  const setModal = useSetRecoilState(ModalData);
   const [userData, setUserData] = useState<userType | null>(null);
   const [bloodData, setBloodData] = useState<BloodData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -103,15 +106,24 @@ export default function RecordBlood({ route }: RecordBloodProps) {
     const today = new Date(todayString).getTime();
 
     if (today < (day?.timestamp ?? 0)) {
-      setInfo("해당 날짜에 입력해주세요.");
+      setModal((prev) => ({
+        ...prev,
+        icon: "warning",
+        title: "해당 날짜에 입력해주세요.",
+        action: () => navigation.navigate("Tabs"),
+      }));
       setIsOneModal(true);
       return;
     } else {
       if (!day || !bloodData) return;
 
       await updateBlood({ day, bloodData, text });
-
-      setInfo("혈당 입력을 완료했습니다.");
+      setModal((prev) => ({
+        ...prev,
+        icon: "success",
+        title: "혈당 입력을 완료했습니다.",
+        action: () => navigation.navigate("Tabs"),
+      }));
       setIsOneModal(true);
     }
   };
@@ -209,9 +221,7 @@ export default function RecordBlood({ route }: RecordBloodProps) {
         <MemoModal setIsMemo={setIsMemo} memo={text} changeText={setText} />
       )}
 
-      {isOneModal && (
-        <OneClickModal setIsModal={setIsOneModal} title={info} mode="save" />
-      )}
+      {isOneModal && <OneClickModal setIsOneModal={setIsOneModal} />}
     </>
   );
 }

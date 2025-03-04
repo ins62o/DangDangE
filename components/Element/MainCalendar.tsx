@@ -5,11 +5,12 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "../../types/stackType";
 import { dateType } from "../../types/dateType";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { homeData, MarkedDate } from "../../atoms/homeData";
 import { getBloodData } from "../../utils/firebase/getBloodData";
 import { getTodayDate } from "../../utils/dateFn";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { ModalData } from "../../atoms/modalData";
 
 type CalendarProp = {
   setIsOneModal?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -23,6 +24,7 @@ export default function MainCalendar({
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
   const [date, setDate] = useState("");
   const [home, setHome] = useRecoilState(homeData);
+  const setModal = useSetRecoilState(ModalData);
   const today = new Date();
   const year = today.getFullYear();
   const month = today.getMonth() + 1;
@@ -68,6 +70,13 @@ export default function MainCalendar({
 
   const checkGuestAccess = (day: dateType) => {
     if (nickname === "게스트" && setIsOneModal) {
+      setIsOneModal(true);
+      setModal((prev) => ({
+        ...prev,
+        icon: "warning",
+        title: "로그인이 필요합니다.",
+        action: () => setIsOneModal(false),
+      }));
       setIsOneModal(true);
     } else {
       navigation.navigate("RecordBlood", { day });

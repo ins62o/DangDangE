@@ -1,69 +1,30 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { colors, fonts } from "../../common";
 import Feather from "@expo/vector-icons/Feather";
-import { StackParamList } from "../../types/stackType";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useNavigation } from "@react-navigation/native";
-import { useSetRecoilState } from "recoil";
-import { userData } from "../../atoms/userData";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useState } from "react";
-import { Blood, userBloodData } from "../../atoms/bloodData";
-import { homeData } from "../../atoms/homeData";
+import { useRecoilValue } from "recoil";
+import { ModalData } from "../../atoms/modalData";
+import { AntDesign } from "@expo/vector-icons";
 
 type ModalProps = {
-  setIsModal: React.Dispatch<React.SetStateAction<boolean>>;
-  title: string;
-  info: string;
-  mode: string;
+  setChoiceModal: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export default function ChoiceModal({
-  setIsModal,
-  title,
-  info,
-  mode,
-}: ModalProps) {
-  const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
-  const setUser = useSetRecoilState(userData);
-  const setBlood = useSetRecoilState<Blood>(userBloodData);
-  const setHome = useSetRecoilState(homeData);
-  const [text, setText] = useState(title);
-
-  // 로그아웃 : 사용자 Atom 변경, 모달 종료, AsyncStorage 값 제거, 홈 화면 전환
-  const handleLogout = async () => {
-    setUser({ id: "로그인이 필요합니다.", nickname: "게스트" });
-    await AsyncStorage.clear();
-    setHome({
-      markingData: {},
-      countDay: 0,
-      bloodAvg: 0,
-    });
-    setIsModal(false);
-    navigation.navigate("Home");
-  };
-
-  // 목표치 설정 : 사용자 혈당 정보 입력 페이지로 전환
-  const goToGoalSetting = () => {
-    setBlood((prev) => ({ ...prev, time: [] }));
-    setIsModal(false);
-    navigation.navigate("BloodType");
-  };
-
-  // 모드별로 다르게 함수 실행
-  const handleModeAction = () => {
-    if (mode === "logout") handleLogout();
-    if (mode === "goal") goToGoalSetting();
-  };
+export default function ChoiceModal({ setChoiceModal }: ModalProps) {
+  const modalData = useRecoilValue(ModalData);
+  const { icon, info, title, action } = modalData;
+  const mode =
+    icon === "warning" ? (
+      <Feather name="alert-circle" size={40} color={colors.Nobel} />
+    ) : (
+      <AntDesign name="checkcircleo" size={40} color={colors.Main} />
+    );
 
   return (
     <View style={styles.container}>
       <View style={styles.modal}>
-        <View style={styles.iconContainer}>
-          <Feather name="alert-circle" size={50} color={colors.Nobel} />
-        </View>
+        <View style={styles.iconContainer}>{mode}</View>
         <View style={styles.textContainer}>
-          <Text style={texts.title}>{text}</Text>
+          <Text style={texts.title}>{title}</Text>
         </View>
         <View style={styles.textContainer}>
           <Text style={texts.info}>{info}</Text>
@@ -71,13 +32,13 @@ export default function ChoiceModal({
         <View style={styles.buttonContainer}>
           <TouchableOpacity
             style={styles.button}
-            onPress={() => setIsModal(false)}
+            onPress={() => setChoiceModal(false)}
           >
             <Text>취소</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.button, styles.okbutton]}
-            onPress={handleModeAction}
+            onPress={() => action?.()}
           >
             <Text style={texts.ok}>확인</Text>
           </TouchableOpacity>

@@ -17,35 +17,46 @@ import { FIREBASE_AUTH } from "../firebaseConfig";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "../types/stackType";
 import { useNavigation } from "@react-navigation/native";
+import { ModalData } from "../atoms/modalData";
 
 type LoginProps = {
   setMode: React.Dispatch<React.SetStateAction<boolean>>; // 로그인 or 회원가입
-  setIsModal: React.Dispatch<React.SetStateAction<boolean>>; // 모달 OPEN or CLOSE
-  setTitle: React.Dispatch<React.SetStateAction<string>>; // 모달 경고문
+  setIsOneModal: React.Dispatch<React.SetStateAction<boolean>>; // 모달 OPEN or CLOSE
 };
 
-export default function Login({ setMode, setIsModal, setTitle }: LoginProps) {
+export default function Login({ setMode, setIsOneModal }: LoginProps) {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
   const setData = useSetRecoilState<User>(userData);
-  const [id, setId] = useState("");
-  const [pw, setPw] = useState("");
+  const setModal = useSetRecoilState(ModalData);
   const [loading, setLoading] = useState(false);
   const [text, setText] = useState("로그인 시도중입니다.");
+  const [id, setId] = useState("");
+  const [pw, setPw] = useState("");
   const auth = FIREBASE_AUTH;
 
   const handleLogin = async () => {
     // 1. 키보드 내리고 아이디 패스워드 입력했는지 확인
     Keyboard.dismiss();
     if (id.length === 0) {
-      setIsModal(true);
-      setTitle("아이디를 입력해주세요.");
+      setIsOneModal(true);
+      setModal((prev) => ({
+        ...prev,
+        icon: "warning",
+        title: "아이디를 입력해주세요.",
+        action: () => setIsOneModal(false),
+      }));
       Keyboard.dismiss();
       return;
     }
 
     if (pw.length === 0) {
-      setIsModal(true);
-      setTitle("비밀번호를 입력해주세요.");
+      setIsOneModal(true);
+      setModal((prev) => ({
+        ...prev,
+        icon: "warning",
+        title: "비밀번호를 입력해주세요.",
+        action: () => setIsOneModal(false),
+      }));
       Keyboard.dismiss();
       return;
     }
@@ -78,8 +89,13 @@ export default function Login({ setMode, setIsModal, setTitle }: LoginProps) {
           : navigation.navigate("Welcome");
       }
     } catch (err) {
-      setTitle("아이디 또는 비밀번호가 일치하지 않습니다.");
-      setIsModal(true);
+      setModal((prev) => ({
+        ...prev,
+        icon: "warning",
+        title: "아이디 또는 비밀번호가 일치하지 않습니다.",
+        action: () => setIsOneModal(false),
+      }));
+      setIsOneModal(true);
       setLoading(false);
     }
   };
