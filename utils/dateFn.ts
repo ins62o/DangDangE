@@ -1,19 +1,17 @@
 export const getWeek = (date: Date): number => {
   const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
   const dayOfMonth = date.getDate();
-  const firstDayWeekday = firstDayOfMonth.getDay(); // 0(일) ~ 6(토)
+  const firstDayWeekday = firstDayOfMonth.getDay();
 
   return Math.ceil((dayOfMonth + firstDayWeekday) / 7);
 };
 
 export const getTodayDate = () => {
   const today = new Date();
-  const year = today.getFullYear();
-  const month = today.getMonth() + 1;
-  const days = today.getDate();
-  const todaydate = `${year}-${String(month).padStart(2, "0")}-${String(
-    days
-  ).padStart(2, "0")}`;
+  const kstDate = new Date(today.getTime() + 9 * 60 * 60 * 1000);
+  const year = kstDate.getUTCFullYear();
+  const month = String(kstDate.getUTCMonth() + 1).padStart(2, "0");
+  const days = String(kstDate.getUTCDate()).padStart(2, "0");
 
-  return todaydate;
+  return `${year}-${month}-${days}`;
 };
