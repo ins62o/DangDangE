@@ -102,7 +102,7 @@ export default function Home() {
             </View>
 
             <View style={styles.bloodTextContainer}>
-              <MyText style={texts.bloodText}>
+              <MyText style={texts.today}>
                 오늘 평균 당화혈색소 : {home.bloodAvg ? home.bloodAvg : 0}%
               </MyText>
               <AntDesign
@@ -133,8 +133,8 @@ const styles = StyleSheet.create({
   contentContainer: {
     flex: 1,
     alignItems: "center",
+    justifyContent: "center",
     backgroundColor: colors.WhiteSmoke,
-    paddingTop: 40,
   },
 
   content: {
@@ -204,19 +204,15 @@ const styles = StyleSheet.create({
 
 const texts = StyleSheet.create({
   badge: {
+    fontSize: Platform.OS === "ios" ? 15 : 13,
     position: "absolute",
     right: 0,
     padding: 10,
-    fontSize: fonts.description,
   },
 
   nickname: {
     fontSize: fonts.Headline,
     paddingLeft: 10,
-  },
-
-  bloodText: {
-    fontSize: fonts.description,
   },
 
   record: {
@@ -226,5 +222,9 @@ const texts = StyleSheet.create({
 
   motive: {
     fontSize: fonts.body,
+  },
+
+  today: {
+    fontSize: Platform.OS === "ios" ? 15 : 13,
   },
 });

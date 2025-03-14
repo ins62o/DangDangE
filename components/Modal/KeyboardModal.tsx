@@ -24,6 +24,7 @@ type keyboardProps = {
   type?: string;
   mode?: string;
   userData?: userType | null;
+  title?: string;
 };
 
 export default function KeyboardModal({
@@ -32,12 +33,15 @@ export default function KeyboardModal({
   type,
   mode,
   userData,
+  title,
 }: keyboardProps) {
   const setBlood = useSetRecoilState<Blood>(userBloodData);
   const titleData = useRecoilValue(keyboardData);
   const { slide, slideTo } = useSlideAni();
   const [text, setText] = useState("0");
   const slideDown = () => slideTo(600);
+
+  console.log(title);
 
   const deleteIcon: JSX.Element = (
     <FontAwesome5 name="backspace" size={24} color="black" />
@@ -65,17 +69,17 @@ export default function KeyboardModal({
       ...prev,
       goal: {
         ...prev.goal,
-        [titleData.title as string]:
+        [title as string]:
           type === "min"
-            ? [+text, prev.goal[titleData.title as string][1]]
-            : [prev.goal[titleData.title as string][0], +text],
+            ? [+text, prev.goal[title as string][1]]
+            : [prev.goal[title as string][0], +text],
       },
     }));
 
     closeModal();
   };
 
-  // 혈당 데이터 저장
+  // 혈당 데이터 저장 ( "blood" 문서 )
   const SaveBloodData = async () => {
     if (typeof titleData.title !== "string") return;
 

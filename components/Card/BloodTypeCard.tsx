@@ -8,7 +8,7 @@ import {
   Pressable,
   Platform,
 } from "react-native";
-import { colors, fonts } from "../../common";
+import { colors, fonts, MyText } from "../../common";
 
 type BloodType = {
   id: string;
@@ -47,10 +47,12 @@ export default function BloodTypeCard({
       </View>
       <View style={styles.infoContainer}>
         <View>
-          <Text style={[texts.title, dynamicText]}>{title}</Text>
+          <MyText fontWeight="Bold" style={[texts.title, dynamicText]}>
+            {title}
+          </MyText>
         </View>
         <View style={styles.infoTextContainer}>
-          <Text style={texts.info}>{info}</Text>
+          <MyText style={texts.info}>{info}</MyText>
         </View>
       </View>
     </Pressable>
@@ -67,7 +69,7 @@ const styles = StyleSheet.create({
     shadowRadius: 20,
     elevation: 5,
     flexDirection: "row",
-    padding: Platform.OS === "ios" ? 15 : 10,
+    padding: Platform.OS === "ios" ? 10 : 5,
   },
 
   Onbackground: {
@@ -99,19 +101,16 @@ const texts = StyleSheet.create({
   title: {
     fontSize: fonts.Subline,
     color: colors.Nobel,
-    fontWeight: "bold",
   },
 
   info: {
-    fontSize: fonts.description,
+    fontSize: Platform.OS === "ios" ? 15 : 13,
     lineHeight: 15,
     color: colors.Nobel,
-    fontWeight: "bold",
   },
 
   black: {
     fontSize: fonts.Subline,
     color: "black",
-    fontWeight: "bold",
   },
 });

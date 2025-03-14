@@ -146,8 +146,9 @@ const styles = StyleSheet.create({
     width: "80%",
     borderRadius: 8,
     backgroundColor: colors.Main,
-    padding: Platform.OS === "ios" ? 15 : 10,
     marginTop: 10,
+    height: Platform.OS === "ios" ? 50 : 45,
+    justifyContent: "center",
   },
 
   signUpContainer: {

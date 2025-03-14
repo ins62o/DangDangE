@@ -83,7 +83,6 @@ const texts = StyleSheet.create({
   },
 
   etc: {
-    fontSize: fonts.description,
     marginTop: 30,
     textAlign: "center",
     lineHeight: 20,

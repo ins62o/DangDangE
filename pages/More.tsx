@@ -104,7 +104,7 @@ export default function More() {
               color={ischecked ? colors.Nobel : "plum"}
             />
             <MyText style={ischecked ? texts.unmenu : texts.menu}>
-              목표치 설정
+              혈당 설정
             </MyText>
           </TouchableOpacity>
 

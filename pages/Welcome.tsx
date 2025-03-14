@@ -8,7 +8,7 @@ import {
   Platform,
 } from "react-native";
 
-import { colors, CommonStyle, fonts } from "../common";
+import { colors, CommonStyle, fonts, MyText } from "../common";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "../types/stackType";
@@ -21,10 +21,10 @@ export default function Welcome() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.textContainer}>
-        <Text style={texts.title}>환영합니다 !</Text>
-        <Text style={texts.body}>
+        <MyText style={texts.title}>환영합니다 !</MyText>
+        <MyText style={texts.body}>
           작은 관리가 만드는 큰 변화, 당당이로 시작하세요.
-        </Text>
+        </MyText>
       </View>
       <View style={styles.imageContainer}>
         <Image source={Character} />
@@ -34,7 +34,9 @@ export default function Welcome() {
           style={[CommonStyle.button, styles.custom]}
           onPress={() => navigation.navigate("BloodType")}
         >
-          <Text style={texts.button}>시작하기</Text>
+          <MyText style={texts.button} fontWeight="Bold">
+            시작하기
+          </MyText>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -46,7 +48,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     paddingTop: Platform.OS === "ios" ? 0 : 30,
-    paddingBottom: Platform.OS === "ios" ? 0 : 60,
   },
   textContainer: {
     flex: 0.2,
@@ -72,16 +73,17 @@ const styles = StyleSheet.create({
 const texts = StyleSheet.create({
   button: {
     color: "#fff",
-    fontWeight: "bold",
+    fontSize: fonts.body,
   },
+
   title: {
     fontSize: fonts.Headline,
     fontWeight: "bold",
     marginBottom: 10,
   },
+
   body: {
     fontSize: fonts.Subline,
-    fontWeight: "bold",
     marginBottom: 10,
     color: colors.Sub1,
   },

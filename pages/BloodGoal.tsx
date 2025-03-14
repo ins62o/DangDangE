@@ -95,7 +95,7 @@ export default function BloodGoal() {
         </View>
       </SafeAreaView>
       {isModal && (
-        <KeyboardModal setIsModal={setIsModal} title={title} type={type} />
+        <KeyboardModal setIsModal={setIsModal} type={type} title={title} />
       )}
     </>
   );
@@ -105,7 +105,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: Platform.OS === "ios" ? 0 : 30,
-    paddingBottom: Platform.OS === "ios" ? 0 : 60,
   },
   BloodContainer: {
     flex: 0.9,
@@ -126,7 +125,7 @@ const styles = StyleSheet.create({
   },
   custom: {
     width: "90%",
-    height: 50,
+    height: Platform.OS === "ios" ? 50 : 45,
     backgroundColor: colors.Sub1,
   },
   scrollContainer: {

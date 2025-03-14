@@ -1,5 +1,13 @@
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  Pressable,
+} from "react-native";
 import { fonts, MyText } from "../../common";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { keyboardData } from "../../atoms/keyboardData";
 
 type BloodProps = {
   title: string;
@@ -26,7 +34,9 @@ export default function BloodBox({
   return (
     <View style={styles.container}>
       <View style={styles.titleContainer}>
-        <Text style={texts.title}>{title}</Text>
+        <MyText style={texts.title} fontWeight="Bold">
+          {title}
+        </MyText>
       </View>
       <View style={styles.inputContainer}>
         <View style={styles.minContainer}>
@@ -64,14 +74,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   minContainer: {
-    flex: 0.3,
+    flex: 0.4,
   },
   maxContainer: {
-    flex: 0.3,
+    flex: 0.4,
   },
   minbutton: {
     backgroundColor: "#fff",
-    width: "90%",
     padding: 10,
     borderRadius: 8,
     shadowColor: "rgba(0, 0, 0, 0.2)",
@@ -79,13 +88,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 20,
     elevation: 5,
+    marginRight: 10,
   },
 });
 
 const texts = StyleSheet.create({
   title: {
     fontSize: fonts.Subline,
-    fontWeight: "bold",
     marginBottom: 15,
   },
   sub: {

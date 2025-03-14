@@ -1,11 +1,12 @@
 import {
+  Platform,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
-import { colors, CommonStyle, fonts } from "../../common";
+import { colors, CommonStyle, fonts, MyText } from "../../common";
 import { StackParamList } from "../../types/stackType";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
@@ -47,10 +48,12 @@ export default function InputModal({ setIsModal }: ModalProps) {
     <View style={styles.container}>
       <View style={styles.modal}>
         <View style={styles.textContainer}>
-          <Text style={texts.title}>{title}</Text>
+          <MyText style={texts.title} fontWeight="Bold">
+            {title}
+          </MyText>
         </View>
         <View style={styles.textContainer}>
-          <Text style={texts.info}>{info}</Text>
+          <MyText style={texts.info}>{info}</MyText>
         </View>
 
         <View style={styles.inputContainer}>
@@ -124,7 +127,7 @@ const styles = StyleSheet.create({
 
   button: {
     width: "40%",
-    height: 50,
+    height: Platform.OS === "ios" ? 50 : 40,
     backgroundColor: colors.WhiteSmoke,
     justifyContent: "center",
     alignItems: "center",
@@ -144,7 +147,6 @@ const styles = StyleSheet.create({
 const texts = StyleSheet.create({
   title: {
     fontSize: fonts.Subline,
-    fontWeight: "bold",
   },
 
   info: {
@@ -152,6 +154,7 @@ const texts = StyleSheet.create({
   },
 
   ok: {
+    fontSize: fonts.body,
     color: "#fff",
   },
 });

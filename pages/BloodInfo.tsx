@@ -162,7 +162,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: Platform.OS === "ios" ? 0 : 30,
-    paddingBottom: Platform.OS === "ios" ? 0 : 60,
   },
   BloodTypeBox: {
     flex: 0.8,

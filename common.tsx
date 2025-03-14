@@ -13,10 +13,9 @@ export const colors = {
 };
 
 export const fonts = {
-  Headline: Platform.OS === "ios" ? 22 : 18,
+  Headline: Platform.OS === "ios" ? 20 : 18,
   Subline: Platform.OS === "ios" ? 18 : 16,
-  body: Platform.OS === "ios" ? 14 : 12,
-  description: Platform.OS === "ios" ? 12 : 10,
+  body: Platform.OS === "ios" ? 16 : 14,
 };
 
 export const CommonStyle = StyleSheet.create({
@@ -31,7 +30,7 @@ export const CommonStyle = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 20,
     elevation: 5,
-    height: 50,
+    height: Platform.OS === "ios" ? 50 : 45,
   },
 
   button: {
@@ -44,16 +43,30 @@ export const CommonStyle = StyleSheet.create({
   },
 });
 
-export const MyText = (props: any) => {
+export const MyText = ({
+  style,
+  fontWeight = "Regular",
+  children,
+  ...props
+}: {
+  style?: any;
+  fontWeight?: "Regular" | "Bold";
+  children: React.ReactNode;
+}) => {
+  const fontMap = {
+    Regular: "Pretendard-Regular",
+    Bold: "Pretendard-Bold",
+  };
+
   return (
     <Text
       {...props}
-      style={{
-        ...props.style,
-        fontFamily: "Pretendard-Regular",
-      }}
+      style={[
+        style,
+        { fontFamily: fontMap[fontWeight] || "Pretendard-Regular" },
+      ]}
     >
-      {props.children}
+      {children}
     </Text>
   );
 };

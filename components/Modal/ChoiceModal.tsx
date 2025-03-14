@@ -1,5 +1,11 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { colors, fonts } from "../../common";
+import {
+  Platform,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { colors, fonts, MyText } from "../../common";
 import Feather from "@expo/vector-icons/Feather";
 import { useRecoilValue } from "recoil";
 import { ModalData } from "../../atoms/modalData";
@@ -24,10 +30,12 @@ export default function ChoiceModal({ setChoiceModal }: ModalProps) {
       <View style={styles.modal}>
         <View style={styles.iconContainer}>{mode}</View>
         <View style={styles.textContainer}>
-          <Text style={texts.title}>{title}</Text>
+          <MyText style={texts.title} fontWeight="Bold">
+            {title}
+          </MyText>
         </View>
         <View style={styles.textContainer}>
-          <Text style={texts.info}>{info}</Text>
+          <MyText style={texts.info}>{info}</MyText>
         </View>
         <View style={styles.buttonContainer}>
           <TouchableOpacity
@@ -40,7 +48,7 @@ export default function ChoiceModal({ setChoiceModal }: ModalProps) {
             style={[styles.button, styles.okbutton]}
             onPress={() => action?.()}
           >
-            <Text style={texts.ok}>확인</Text>
+            <MyText style={texts.ok}>확인</MyText>
           </TouchableOpacity>
         </View>
       </View>
@@ -89,7 +97,7 @@ const styles = StyleSheet.create({
 
   button: {
     width: "40%",
-    height: 50,
+    height: Platform.OS === "ios" ? 50 : 40,
     backgroundColor: colors.WhiteSmoke,
     justifyContent: "center",
     alignItems: "center",
@@ -105,7 +113,6 @@ const styles = StyleSheet.create({
 const texts = StyleSheet.create({
   title: {
     fontSize: fonts.Subline,
-    fontWeight: "bold",
   },
 
   info: {
@@ -113,6 +120,7 @@ const texts = StyleSheet.create({
   },
 
   ok: {
+    fontSize: fonts.body,
     color: "#fff",
   },
 });

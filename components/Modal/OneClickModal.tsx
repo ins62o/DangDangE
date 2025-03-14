@@ -1,5 +1,11 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { colors, fonts } from "../../common";
+import {
+  Platform,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { colors, fonts, MyText } from "../../common";
 import Feather from "@expo/vector-icons/Feather";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useRecoilValue } from "recoil";
@@ -24,7 +30,7 @@ export default function OneClickModal({ setIsOneModal }: Modal) {
       <View style={styles.modal}>
         <View style={styles.iconContainer}>{mode}</View>
         <View style={styles.textContainer}>
-          <Text style={texts.title}>{title}</Text>
+          <MyText style={texts.title}>{title}</MyText>
         </View>
 
         <View style={styles.buttonContainer}>
@@ -32,7 +38,7 @@ export default function OneClickModal({ setIsOneModal }: Modal) {
             style={[styles.button, styles.okbutton]}
             onPress={() => action?.()}
           >
-            <Text style={texts.ok}>확인</Text>
+            <MyText style={texts.ok}>확인</MyText>
           </TouchableOpacity>
         </View>
       </View>
@@ -92,7 +98,7 @@ const styles = StyleSheet.create({
 
   okbutton: {
     backgroundColor: colors.Main,
-    height: 50,
+    height: Platform.OS === "ios" ? 50 : 40,
     marginLeft: 10,
   },
 });

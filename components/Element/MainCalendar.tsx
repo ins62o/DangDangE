@@ -46,12 +46,12 @@ export default function MainCalendar({
 
       // 3. 캘린더 마킹데이터를 만듬 (캘린더 라이브러리와 데이터 형식 일치)
       const markingData: Record<string, MarkedDate> = {};
-      const today = new Date().toISOString().slice(0, 10);
+
       keys.forEach((data) => {
         markingData[data] = { marked: true, dotColor: colors.Main };
 
         // 3-1. 오늘 날짜라면 dotColor 변경
-        if (data === today) {
+        if (data === todayDate) {
           markingData[data] = {
             ...markingData[data],
             selected: true,
